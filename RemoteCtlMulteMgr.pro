@@ -11,10 +11,14 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    QCheckBoxDelegate.cpp \
+    QOnOffPushButton.cpp
 
 HEADERS  += mainwindow.h \
-    debug.h
+    debug.h \
+    QCheckBoxDelegate.h \
+    QOnOffPushButton.h
 
 FORMS    += mainwindow.ui
 
