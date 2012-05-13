@@ -3,6 +3,9 @@
 #include <QPushButton>
 #include <QItemDelegate>
 #include <QWidget>
+#include <QSharedPointer>
+#include "multimgr_device_dev.h"
+#include "QRelayDeviceControl.h"
 
 class QOnOffPushButton : public QPushButton
 {
@@ -12,9 +15,9 @@ public:
     bool SetOnOff(void);
 private:
     void paintEvent ( QPaintEvent * event );
-
 public:
     bool onoff;
+    QSharedPointer<QRelayDeviceControl>  pdevice;
 };
 
 
@@ -74,7 +77,6 @@ public:
     void setEditorData(QWidget *editor, const QModelIndex &index) const;
     void setModelData(QWidget *editor, QAbstractItemModel *model,
                       const QModelIndex &index) const;
-
 //! [1] //! [2]
 private slots:
     void emitCommitData();

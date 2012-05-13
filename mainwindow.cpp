@@ -5,8 +5,8 @@
 #include "QOnOffPushButton.h"
 #include "debug.h"
 
-#define THISINFO                1
-#define THISERROR            1
+#define THISINFO              0
+#define THISERROR           1
 #define THISASSERT          1
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -30,6 +30,10 @@ MainWindow::MainWindow(QWidget *parent) :
         manualAddDevice(0);
         manualAddDevice(1);
         manualAddDevice(2);
+
+
+        //初始化UDP接口
+        InitUdpSocket();
 }
 
 MainWindow::~MainWindow()
@@ -79,7 +83,7 @@ void MainWindow::manualAddDevice(int index)
     QTableWidgetItem *item1 = new QTableWidgetItem(name);
     name.sprintf("192.168.1.%d",100+index);
     QTableWidgetItem *item2 = new QTableWidgetItem(name);
-    QTableWidgetItem *item5 = new QTableWidgetItem(tr("SingalChannelButton"));
+    QTableWidgetItem *item5 = new QTableWidgetItem(tr(""));
     QTableWidgetItem *item6 = new QTableWidgetItem(tr("SetON"));
     QTableWidgetItem *item7 = new QTableWidgetItem(tr("SetOFF"));
     //
@@ -98,4 +102,56 @@ void MainWindow::manualAddDevice(int index)
     deviceTable->openPersistentEditor(item7);
 }
 
+void MainWindow::InitUdpSocket(void)
+{
+    QSharedPointer<QUdpSocket>  pudp(new QUdpSocket);
+    pUdpSocket = pudp;
+    pUdpSocket->bind(505);
+    connect(pUdpSocket.data(), SIGNAL(readyRead()),
+                 this, SLOT(UdpreadPendingDatagrams()));
+}
 
+void MainWindow::UdpreadPendingDatagrams()
+{
+    while (pUdpSocket->hasPendingDatagrams()) {
+             QByteArray datagram;
+             datagram.resize(pUdpSocket->pendingDatagramSize());
+             QHostAddress sender;
+             quint16 senderPort;
+
+             pUdpSocket->readDatagram(datagram.data(), datagram.size(),
+                                     &sender, &senderPort);
+
+             processTheDeviceData(datagram,sender,senderPort);
+         }
+}
+
+void MainWindow::processTheDeviceData(QByteArray & data,
+                                      QHostAddress & sender,quint16 senderport)
+{
+    //解析报文，分发命令
+    QString portstr;
+    portstr.sprintf("%d",senderport);
+    QString str = sender.toString();
+    str += ":";
+    str += portstr;
+    debuginfo(("%s",str.toAscii().data()));
+    //根据IP地址和端口号，查找已经有的数据，如果有了，给它发消息，让他自己处理自己的事情
+    QMap<QString,QSharedPointer<QRelayDeviceControl> >::const_iterator i = mydevicemap.find(str);
+    if(i != mydevicemap.end()) {
+        debuginfo(("found device,send msg"));
+        (*i)->SendRxData(data);
+    } else {
+        debuginfo(("Not found device,insert it. and send msg"));
+        QSharedPointer<QRelayDeviceControl> pdev(new QRelayDeviceControl(this));
+        pdev->InitDeviceAddress(sender,senderport,pUdpSocket);
+        pdev->SendRxData(data);
+        mydevicemap.insert(str,pdev);
+    }
+    //如果没有找到，则创建一个，然后再转发消息给他处理
+    //设备对象是一个完整的对象，可以处理和拥有自己数据
+}
+
+void MainWindow::UpdateDeviceData(QSharedPointer<QRelayDeviceControl> & pdev)
+{
+}

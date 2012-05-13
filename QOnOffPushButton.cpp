@@ -1,7 +1,10 @@
 #include "QOnOffPushButton.h"
 
 #include <QPainter>
+#include <QBrush>
 #include <QMouseEvent>
+#include <QColor>
+#include <QRect>
 
 #include "debug.h"
 #define THISINFO                1
@@ -100,12 +103,27 @@ QRelayValueSingalChannalButton::QRelayValueSingalChannalButton(QWidget * parent)
 
 void QRelayValueSingalChannalButton::paintEvent ( QPaintEvent * event )
 {
+
     QPainter painter(this);
+#if 1
     painter.setPen(Qt::blue);
     painter.setFont(QFont("Arial", 18));
     QString str;
     str.sprintf("0x%02X",this->relay_bitmap);
     painter.drawText(rect(), Qt::AlignCenter, str);
+#endif
+    QRect rct = rect();
+    int w = rct.width() / 5;
+    for(int i=0;i<5;i++) {
+        if(this->relay_bitmap&(1<<i)) {
+            QBrush brush(QColor(0,250,0));
+            painter.fillRect(i*w,0,w,rct.height(),brush);
+        } else {
+            QBrush brush(QColor(200,200,200));
+            painter.fillRect(i*w,0,w,rct.height(),brush);
+        }
+    }
+    //painter.drawLine(0,0,100,20);
 }
 
 int QRelayValueSingalChannalButton::mouseAtButtonPosition(int x)
@@ -123,7 +141,6 @@ void QRelayValueSingalChannalButton::mousePressEvent ( QMouseEvent * event )
     int x = mouseAtButtonPosition(pos);
     if(x >= 0 && x < 32) relay_bitmap ^= (1<<x);
     debuginfo(("mouse at position %d/%d=%drelay=0x%02X",pos,this->width(),x,relay_bitmap));
-     this->setText("");
     this->update();
 }
 
@@ -153,12 +170,13 @@ void QRelayValueSingalChannalButtonDelegate::setModelData(QWidget *editor, QAbst
                                  const QModelIndex &index) const
 {
     QRelayValueSingalChannalButton *pushbutton = qobject_cast<QRelayValueSingalChannalButton *>(editor);
-    model->setData(index, pushbutton->relay_bitmap);
+    //model->setData(index, pushbutton->relay_bitmap);
+     index.model()->data(index) = pushbutton->relay_bitmap;
 }
 
 void QRelayValueSingalChannalButtonDelegate::emitCommitData()
 {
-    emit commitData(qobject_cast<QWidget *>(sender()));
+   // emit commitData(qobject_cast<QWidget *>(sender()));
 }
 
 void QRelayValueSingalChannalButtonDelegate::buttonClicked(bool click)

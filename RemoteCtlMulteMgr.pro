@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network
 
 TARGET = RemoteCtlMulteMgr
 TEMPLATE = app
@@ -12,13 +12,16 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    QCheckBoxDelegate.cpp \
-    QOnOffPushButton.cpp
+    QOnOffPushButton.cpp \
+    QRelayDeviceControl.cpp \
+    QMyDeviceTableDelegates.cpp
 
 HEADERS  += mainwindow.h \
     debug.h \
-    QCheckBoxDelegate.h \
-    QOnOffPushButton.h
+    QOnOffPushButton.h \
+    QRelayDeviceControl.h \
+    multimgr_device_dev.h \
+    QMyDeviceTableDelegates.h
 
 FORMS    += mainwindow.ui
 
