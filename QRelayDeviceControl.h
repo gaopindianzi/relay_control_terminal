@@ -5,7 +5,12 @@
 #include <QSharedPointer>
 #include <QUdpSocket>
  #include <QBitArray>
+#include <QTableWidgetItem>
 #include "multimgr_device_dev.h"
+#include "CDeviceDelegate.h"
+
+
+
 
 
 class QRelayDeviceControl : public QObject

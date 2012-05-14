@@ -5,8 +5,9 @@
 #include <QWidget>
 #include <QModelIndex>
 #include <QComboBox>
+#include "CDeviceDelegate.h"
 
-class QCheckBoxDelegate : public QItemDelegate
+class QCheckBoxDelegate : public CDeviceDelegate
 {
     Q_OBJECT
 

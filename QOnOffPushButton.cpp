@@ -44,7 +44,7 @@ bool QOnOffPushButton::SetOnOff(void)
 
 
 QOnOffPushDelegate::QOnOffPushDelegate(QObject *parent)
-    : QItemDelegate(parent)
+    : CDeviceDelegate(parent)
 {
 }
 
@@ -146,7 +146,7 @@ void QRelayValueSingalChannalButton::mousePressEvent ( QMouseEvent * event )
 
 
 QRelayValueSingalChannalButtonDelegate::QRelayValueSingalChannalButtonDelegate(QObject *parent)
-    : QItemDelegate(parent)
+    : CDeviceDelegate(parent)
 {
 }
 

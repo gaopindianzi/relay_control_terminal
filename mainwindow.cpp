@@ -3,6 +3,7 @@
 #include <QVBoxLayout>
 #include "QCheckBoxDelegate.h"
 #include "QOnOffPushButton.h"
+#include "CDeviceDelegate.h"
 #include "debug.h"
 
 #define THISINFO              0
@@ -46,7 +47,7 @@ void MainWindow::CreateDevcieTable(void)
         deviceGroupBox = new QGroupBox(tr("DeviceTable"));
         deviceTable = new QTableWidget;
         deviceTable->setSelectionMode(QAbstractItemView::NoSelection);
-        deviceTable->setItemDelegateForColumn(0,new QCheckBoxDelegate(this));
+        deviceTable->setItemDelegateForColumn(0,new CDeviceDelegate(this));
         deviceTable->setItemDelegateForColumn(5,new QRelayValueSingalChannalButtonDelegate(this));
         deviceTable->setItemDelegateForColumn(6,new QOnOffPushDelegate(this));
         deviceTable->setItemDelegateForColumn(7,new QOnOffPushDelegate(this));
@@ -80,9 +81,9 @@ void MainWindow::manualAddDevice(int index)
     int row = deviceTable->rowCount();
     deviceTable->setRowCount(row + 1);
     QTableWidgetItem *item0 = new QTableWidgetItem(tr(""));
-    QTableWidgetItem *item1 = new QTableWidgetItem(name);
+    QTableWidgetItem *item1 = new QTableWidgetItem(tr(""));
     name.sprintf("192.168.1.%d",100+index);
-    QTableWidgetItem *item2 = new QTableWidgetItem(name);
+    QTableWidgetItem *item2 = new QTableWidgetItem(tr(""));
     QTableWidgetItem *item5 = new QTableWidgetItem(tr(""));
     QTableWidgetItem *item6 = new QTableWidgetItem(tr("SetON"));
     QTableWidgetItem *item7 = new QTableWidgetItem(tr("SetOFF"));

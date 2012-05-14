@@ -8,6 +8,9 @@
 unsigned int CRC16(unsigned char *Array,unsigned int Len);
 
 
+
+
+
 QRelayDeviceControl::QRelayDeviceControl(QObject * parent) :
     QObject(parent),pdev_info(new device_info_st)
 {
@@ -21,7 +24,6 @@ void QRelayDeviceControl::InitDeviceAddress(QHostAddress & addr,quint16 port,QSh
 
 void QRelayDeviceControl::SendRxData(QByteArray & data)
 {
-    static int count = 0;
     device_info_st * pst = (device_info_st *)data.data();
     if(pst->command == CMD_SET_DEVICE_INFO) {
         unsigned int crc = CRC16((unsigned char *)pst,pst->command_len - 2);
@@ -48,8 +50,6 @@ void QRelayDeviceControl::SendRxData(QByteArray & data)
 
 void QRelayDeviceControl::SetDeviceInfo(QByteArray & data)
 {
-    device_info_st * pst = (device_info_st *)data.data();
-    debuginfo(("set device info."));
 }
 
 

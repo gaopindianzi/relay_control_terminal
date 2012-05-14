@@ -6,6 +6,7 @@
 #include <QSharedPointer>
 #include "multimgr_device_dev.h"
 #include "QRelayDeviceControl.h"
+#include "CDeviceDelegate.h"
 
 class QOnOffPushButton : public QPushButton
 {
@@ -23,7 +24,7 @@ public:
 
 
 
-class QOnOffPushDelegate : public QItemDelegate
+class QOnOffPushDelegate : public CDeviceDelegate
 {
     Q_OBJECT
 
@@ -63,7 +64,7 @@ public:
 
 
 
-class QRelayValueSingalChannalButtonDelegate : public QItemDelegate
+class QRelayValueSingalChannalButtonDelegate : public CDeviceDelegate
 {
     Q_OBJECT
 

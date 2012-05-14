@@ -1,8 +1,8 @@
-#include "QMyDeviceTableDelegates.h"
+#include "QCheckBoxDelegate.h"
 
 
 QCheckBoxDelegate::QCheckBoxDelegate(QObject *parent)
-    : QItemDelegate(parent)
+    : CDeviceDelegate(parent)
 {
 }
 
