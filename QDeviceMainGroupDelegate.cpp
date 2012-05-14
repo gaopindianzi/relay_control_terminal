@@ -1,5 +1,15 @@
 #include "QDeviceMainGroupDelegate.h"
 #include <QLineEdit>
+#include <QPainter>
+#include <QPoint>
+#include <QRect>
+
+#include "debug.h"
+
+#define THISINFO                1
+#define THISERROR            1
+#define THISASSERT          1
+
 
 
 QDeviceNameDelegate::QDeviceNameDelegate(QObject *parent)
@@ -16,6 +26,22 @@ QWidget *QDeviceNameDelegate::createEditor(QWidget *parent,
     edit->setText(pdev->GetDeviceName());
     return edit;
 }
+
+void QDeviceNameDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
+                         const QModelIndex &index) const
+{
+    QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(index.data());
+    debuginfo(("option(%d,%d,%d)",option.rect.x(),option.rect.y(),option.rect.height()));
+    //painter->save();
+    //painter->fillRect(option.rect, option.palette.highlight());
+    //QRect rec = option.rect;
+
+    //painter->fillRect();
+    QRectF rect = option.rect;
+    painter->drawText(rect,Qt::AlignVCenter|Qt::AlignLeft,pdev->GetDeviceName());
+   // painter->restore();
+}
+
 
 void QDeviceNameDelegate::setEditorData(QWidget *editor,
                                   const QModelIndex &index) const
