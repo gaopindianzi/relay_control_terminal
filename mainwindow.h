@@ -9,8 +9,8 @@
 #include <QUdpSocket>
 #include <QSharedPointer>
 #include "QRelayDeviceControl.h"
+#include "CDeviceTableWidgetItem.h"
 #include <QMap>
-
 
 namespace Ui {
     class MainWindow;
@@ -26,6 +26,7 @@ public:
 private:
     void CreateDevcieTable(void);
     void manualAddDevice(int index);
+    void InsertDevice(QSharedPointer<QRelayDeviceControl> & pdev);
 public:
     void InitUdpSocket(void);
     void processTheDeviceData(QByteArray & data,QHostAddress & sender,quint16 senderport);

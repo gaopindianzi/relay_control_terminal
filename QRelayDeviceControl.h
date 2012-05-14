@@ -24,7 +24,11 @@ public slots:
 public:
     void SetDeviceInfo(QByteArray & data);
     int   GetDeviceRelayCount(void) { return relay_bitmask.size(); }
-
+    QString GetDeviceAddress(void);
+    QString GetDeviceName(void);
+    QString GetGroup1Name(void);
+    QString GetGroup2Name(void);
+    QString GetStatus(void) {  return tr("正在连接中"); }
 private:
     QHostAddress   deviceaddr;
     quint16              deviceport;
@@ -32,6 +36,10 @@ private:
     QSharedPointer<device_info_st>   pdev_info;
     QBitArray                                       relay_bitmask;
 };
+
+typedef QSharedPointer<QRelayDeviceControl>   RelayDeviceSharePonterType;
+
+Q_DECLARE_METATYPE(RelayDeviceSharePonterType)
 
 
 #endif // QRELAYDEVICECONTROL_H

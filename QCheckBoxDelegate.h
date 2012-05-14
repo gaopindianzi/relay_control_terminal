@@ -4,8 +4,19 @@
 #include <QItemDelegate>
 #include <QWidget>
 #include <QModelIndex>
-#include <QComboBox>
+#include <QCheckBox>
+#include <QTableWidgetItem>
 #include "CDeviceDelegate.h"
+
+
+class QDeviceCheckBox : public QCheckBox
+{
+    Q_OBJECT
+public:
+    QDeviceCheckBox ( QWidget * parent = 0 );
+private:
+    //void paintEvent ( QPaintEvent * event );
+};
 
 class QCheckBoxDelegate : public CDeviceDelegate
 {
@@ -13,9 +24,10 @@ class QCheckBoxDelegate : public CDeviceDelegate
 
 public:
     QCheckBoxDelegate(QObject *parent = 0);
-//! [0]
+private:
+    void paint(QPainter *painter, const QStyleOptionViewItem &option,
+                             const QModelIndex &index) const;
 
-//! [1]
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
                           const QModelIndex &index) const;
     void setEditorData(QWidget *editor, const QModelIndex &index) const;
@@ -24,8 +36,10 @@ public:
 
 //! [1] //! [2]
 private slots:
-    void emitCommitData();
     void buttonClicked ( bool );
 };
+
+
+
 
 #endif // QCHECKBOXDELEGATE_H

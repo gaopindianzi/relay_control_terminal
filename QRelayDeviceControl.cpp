@@ -1,4 +1,5 @@
 #include "QRelayDeviceControl.h"
+#include <QDebug>
 #include "debug.h"
 
 #define THISINFO                1
@@ -50,8 +51,26 @@ void QRelayDeviceControl::SendRxData(QByteArray & data)
 
 void QRelayDeviceControl::SetDeviceInfo(QByteArray & data)
 {
+    debuginfo((("set deivce info..")));
 }
 
+QString QRelayDeviceControl::GetDeviceAddress(void)
+{
+    return deviceaddr.toString();
+}
+
+QString QRelayDeviceControl::GetDeviceName(void)
+{
+    return deviceaddr.toString();
+}
+QString QRelayDeviceControl::GetGroup1Name(void)
+{
+    return deviceaddr.toString();
+}
+QString QRelayDeviceControl::GetGroup2Name(void)
+{
+    return deviceaddr.toString();
+}
 
 unsigned int CRC16(unsigned char *Array,unsigned int Len)
 {

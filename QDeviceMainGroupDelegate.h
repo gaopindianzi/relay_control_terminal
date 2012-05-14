@@ -1,6 +1,5 @@
-#ifndef QONOFFPUSHBUTTON_H
-#define QONOFFPUSHBUTTON_H
-#include <QPushButton>
+#ifndef QDEVICEMAINGROUPDELEGATE_H
+#define QDEVICEMAINGROUPDELEGATE_H
 #include <QItemDelegate>
 #include <QWidget>
 #include <QSharedPointer>
@@ -8,26 +7,14 @@
 #include "QRelayDeviceControl.h"
 #include "CDeviceDelegate.h"
 
-class QOnOffPushButton : public QPushButton
-{
-    Q_OBJECT
-public:
-    QOnOffPushButton(QWidget * parent = 0 );
-    bool SetOnOff(void);
-private:
-    void paintEvent ( QPaintEvent * event );
-public:
-    bool onoff;
-    QSharedPointer<QRelayDeviceControl>  pdevice;
-};
 
 
-class QSetOnPushDelegate : public CDeviceDelegate
+class QDeviceNameDelegate : public CDeviceDelegate
 {
     Q_OBJECT
 
 public:
-    QSetOnPushDelegate(QObject *parent = 0);
+    QDeviceNameDelegate(QObject *parent = 0);
 //! [0]
 
 //! [1]
@@ -42,12 +29,12 @@ private slots:
     void buttonClicked ( bool );
 };
 
-class QSetOffPushDelegate : public CDeviceDelegate
+class QDeviceMainGroupDelegate : public CDeviceDelegate
 {
     Q_OBJECT
 
 public:
-    QSetOffPushDelegate(QObject *parent = 0);
+    QDeviceMainGroupDelegate(QObject *parent = 0);
 //! [0]
 
 //! [1]
@@ -63,30 +50,12 @@ private slots:
 };
 
 
-class QRelayValueSingalChannalButton : public QPushButton
-{
-    Q_OBJECT
-public:
-    QRelayValueSingalChannalButton(QWidget * parent = 0 );
-private:
-    void paintEvent ( QPaintEvent * event );
-protected:
-    void mousePressEvent ( QMouseEvent * event );
-    int   mouseAtButtonPosition(int x);
-public:
-    unsigned int relay_bitmap;
-};
-
-
-
-
-
-class QRelayValueSingalChannalButtonDelegate : public CDeviceDelegate
+class QDeviceSlaveGroupDelegate : public CDeviceDelegate
 {
     Q_OBJECT
 
 public:
-    QRelayValueSingalChannalButtonDelegate(QObject *parent = 0);
+    QDeviceSlaveGroupDelegate(QObject *parent = 0);
 //! [0]
 
 //! [1]
@@ -95,13 +64,11 @@ public:
     void setEditorData(QWidget *editor, const QModelIndex &index) const;
     void setModelData(QWidget *editor, QAbstractItemModel *model,
                       const QModelIndex &index) const;
+
 //! [1] //! [2]
 private slots:
-    void emitCommitData();
     void buttonClicked ( bool );
 };
 
 
-
-
-#endif // QONOFFPUSHBUTTON_H
+#endif // QDEVICEMAINGROUPDELEGATE_H
