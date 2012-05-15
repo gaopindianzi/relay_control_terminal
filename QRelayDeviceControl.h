@@ -21,20 +21,33 @@ public:
 public slots:
     void InitDeviceAddress(QHostAddress & addr,quint16 port,QSharedPointer<QUdpSocket>  & psocket);
     void SendRxData(QByteArray & data);
+    void update(void);
+signals:
+    void DeviceInfoChanged(QString hostaddrID);
 public:
     void SetDeviceInfo(QByteArray & data);
     int   GetDeviceRelayCount(void) { return relay_bitmask.size(); }
     QString GetDeviceAddress(void);
     QString GetDeviceName(void);
+    void      SetDeviceName(QString newDeviceName);
     QString GetGroup1Name(void);
+    void      SetGroup1Name(QString name);
     QString GetGroup2Name(void);
-    QString GetStatus(void) {  return tr("正在连接中"); }
+    void      SetGroup2Name(QString name);
+    QString GetStatus(void);
+private:
+    void      SendCommandData(const char * buffer,int len);
+private:
+    QString devicename;
+    QString devicegroup1;
+    QString devicegroup2;
+    QString devicestatus;
 private:
     QHostAddress   deviceaddr;
     quint16              deviceport;
     QSharedPointer<QUdpSocket>      pUdpSocket;
     QSharedPointer<device_info_st>   pdev_info;
-    QBitArray                                       relay_bitmask;
+    QBitArray                                    relay_bitmask;
 };
 
 typedef QSharedPointer<QRelayDeviceControl>   RelayDeviceSharePonterType;

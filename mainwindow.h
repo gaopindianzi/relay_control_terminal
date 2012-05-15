@@ -32,7 +32,7 @@ public:
     void processTheDeviceData(QByteArray & data,QHostAddress & sender,quint16 senderport);
 private slots:
     void UdpreadPendingDatagrams();
-    void UpdateDeviceData(QSharedPointer<QRelayDeviceControl> & pdev);
+    void DeviceInfoChanged(QString hostaddrID);
 private:
     QWidget *centralWidget;
     //device table

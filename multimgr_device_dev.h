@@ -15,7 +15,8 @@ typedef struct __device_info_st
 	unsigned char mac[6];
 	char          group_name1[32];
 	char          group_name2[32];
-    char          password[20];   //通信用的地址
+    char          change_password;
+    char          password[20];   //通信用的地址    
 	unsigned char device_time[6];
 	unsigned char work_port[2];   //本地的UDP通信端口号
 	unsigned char remote_host_addr[32]; //远程主机的IP地址

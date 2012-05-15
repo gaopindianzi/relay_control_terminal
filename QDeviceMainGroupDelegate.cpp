@@ -31,15 +31,8 @@ void QDeviceNameDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
                          const QModelIndex &index) const
 {
     QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(index.data());
-    debuginfo(("option(%d,%d,%d)",option.rect.x(),option.rect.y(),option.rect.height()));
-    //painter->save();
-    //painter->fillRect(option.rect, option.palette.highlight());
-    //QRect rec = option.rect;
-
-    //painter->fillRect();
     QRectF rect = option.rect;
     painter->drawText(rect,Qt::AlignVCenter|Qt::AlignLeft,pdev->GetDeviceName());
-   // painter->restore();
 }
 
 
@@ -54,7 +47,10 @@ void QDeviceNameDelegate::setEditorData(QWidget *editor,
 void QDeviceNameDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
                                  const QModelIndex &index) const
 {
+    QLineEdit *edit = qobject_cast<QLineEdit *>(editor);
+    debuginfo(("set device name:%s",edit->text().toAscii().data()));
     QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(index.data());
+    pdev->SetDeviceName(edit->text());
     model->setData(index, qVariantFromValue(pdev));
 }
 
@@ -81,23 +77,32 @@ QWidget *QDeviceMainGroupDelegate::createEditor(QWidget *parent,
                                      const QModelIndex &index) const
 {
     QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(index.data());
-    return CDeviceDelegate::createEditor(parent,option,index);
+    QLineEdit * edit = new QLineEdit(parent);
+    edit->setText(pdev->GetGroup1Name());
+    return edit;
 }
 
 void QDeviceMainGroupDelegate::setEditorData(QWidget *editor,
                                   const QModelIndex &index) const
 {
     QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(index.data());
-    return CDeviceDelegate::setEditorData(editor,index);
+    QLineEdit *edit = qobject_cast<QLineEdit *>(editor);
+    edit->setText(pdev->GetGroup1Name());
 }
 
 void QDeviceMainGroupDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
                                  const QModelIndex &index) const
 {
     QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(index.data());
-    return CDeviceDelegate::setModelData(editor,model,index);
+    model->setData(index, qVariantFromValue(pdev));
 }
-
+void QDeviceMainGroupDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
+                         const QModelIndex &index) const
+{
+    QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(index.data());
+    QRectF rect = option.rect;
+    painter->drawText(rect,Qt::AlignVCenter|Qt::AlignLeft,pdev->GetGroup1Name());
+}
 void QDeviceMainGroupDelegate::buttonClicked(bool click)
 {
 }
@@ -125,23 +130,32 @@ QWidget *QDeviceSlaveGroupDelegate::createEditor(QWidget *parent,
                                      const QModelIndex &index) const
 {
     QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(index.data());
-    return CDeviceDelegate::createEditor(parent,option,index);
+    QLineEdit * edit = new QLineEdit(parent);
+    edit->setText(pdev->GetGroup2Name());
+    return edit;
 }
 
 void QDeviceSlaveGroupDelegate::setEditorData(QWidget *editor,
                                   const QModelIndex &index) const
 {
     QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(index.data());
-    return CDeviceDelegate::setEditorData(editor,index);
+    QLineEdit *edit = qobject_cast<QLineEdit *>(editor);
+    edit->setText(pdev->GetGroup2Name());
 }
 
 void QDeviceSlaveGroupDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
                                  const QModelIndex &index) const
 {
     QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(index.data());
-    return CDeviceDelegate::setModelData(editor,model,index);
+    model->setData(index, qVariantFromValue(pdev));
 }
-
+void QDeviceSlaveGroupDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
+                         const QModelIndex &index) const
+{
+    QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(index.data());
+    QRectF rect = option.rect;
+    painter->drawText(rect,Qt::AlignVCenter|Qt::AlignLeft,pdev->GetGroup2Name());
+}
 void QDeviceSlaveGroupDelegate::buttonClicked(bool click)
 {
 }

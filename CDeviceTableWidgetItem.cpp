@@ -8,5 +8,3 @@ CDeviceTableWidgetItem::CDeviceTableWidgetItem(RelayDeviceSharePonterType & pdev
 {
     setData(0,qVariantFromValue(pdevice));
 }
-
-

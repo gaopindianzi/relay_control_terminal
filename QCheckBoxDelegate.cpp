@@ -42,7 +42,7 @@ void QCheckBoxDelegate::setEditorData(QWidget *editor,
     QDeviceCheckBox *edit = qobject_cast<QDeviceCheckBox *>(editor);
     edit->move(5,0);
     edit->setText("");
-    debuginfo(("check box set edit data"));
+   // debuginfo(("check box set edit data"));
     edit->setCheckState(Qt::Unchecked);
 }
 

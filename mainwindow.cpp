@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QVBoxLayout>
+#include <QModelIndex>
 #include "QCheckBoxDelegate.h"
 #include "QOnOffPushButton.h"
 #include "CDeviceDelegate.h"
@@ -9,7 +10,7 @@
 #include "QDeviceStatusDelegate.h"
 #include "debug.h"
 
-#define THISINFO              0
+#define THISINFO             1
 #define THISERROR           1
 #define THISASSERT          1
 
@@ -117,6 +118,11 @@ void MainWindow::manualAddDevice(int index)
      deviceTable->openPersistentEditor(item6);  //不用双击就可以显示控件的形式
      deviceTable->openPersistentEditor(item7);
      deviceTable->openPersistentEditor(item8);
+     //
+     //添加信号
+     //updateGeometries
+     //modelReset
+     connect(pdev.data(),SIGNAL(DeviceInfoChanged(QString)),this,SLOT(DeviceInfoChanged(QString))); //,Qt::QueuedConnection);
  }
 
 void MainWindow::InitUdpSocket(void)
@@ -152,12 +158,13 @@ void MainWindow::processTheDeviceData(QByteArray & data,
     QString str = sender.toString();
     str += ":";
     str += portstr;
-    debuginfo(("%s",str.toAscii().data()));
+   // debuginfo(("%s",str.toAscii().data()));
     //根据IP地址和端口号，查找已经有的数据，如果有了，给它发消息，让他自己处理自己的事情
     QMap<QString,QSharedPointer<QRelayDeviceControl> >::const_iterator i = mydevicemap.find(str);
     if(i != mydevicemap.end()) {
-        debuginfo(("found device,send msg"));
+        //debuginfo(("found device,send rx data"));
         (*i)->SendRxData(data);
+        //DeviceInfoChanged(str);
     } else {
         debuginfo(("Not found device,insert it. and send msg"));
         QSharedPointer<QRelayDeviceControl> pdev(new QRelayDeviceControl(this));
@@ -170,6 +177,24 @@ void MainWindow::processTheDeviceData(QByteArray & data,
     //设备对象是一个完整的对象，可以处理和拥有自己数据
 }
 
-void MainWindow::UpdateDeviceData(QSharedPointer<QRelayDeviceControl> & pdev)
+void MainWindow::DeviceInfoChanged(QString  hostaddrID)
 {
+    debuginfo(("host:%s",hostaddrID.toAscii().data()));
+    QMap<QString,QSharedPointer<QRelayDeviceControl> >::const_iterator it = mydevicemap.find(hostaddrID);
+    if(it != mydevicemap.end()) {
+        int row = deviceTable->rowCount();
+        for(int i=0;i<row;i++) {
+            QTableWidgetItem * item = deviceTable->item(i,1);
+            QVariant var = item->data(0);
+            QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(var);
+            if((*it) == pdev) {
+                QAbstractItemModel * model = deviceTable->model ();
+                for(int j=0;j<9;j++) {
+                    QModelIndex index = model->index(i,j);
+                    deviceTable->update(index);
+                }
+                break;
+            }
+        }
+    }
 }
