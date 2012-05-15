@@ -170,8 +170,10 @@ void MainWindow::processTheDeviceData(QByteArray & data,
         QSharedPointer<QRelayDeviceControl> pdev(new QRelayDeviceControl(this));
         pdev->InitDeviceAddress(sender,senderport,pUdpSocket);
         pdev->SendRxData(data);
-        mydevicemap.insert(str,pdev);
-        InsertDevice(pdev);
+        if(pdev->devcie_info_is_useful()) {
+            mydevicemap.insert(str,pdev);
+            InsertDevice(pdev);
+        }
     }
     //如果没有找到，则创建一个，然后再转发消息给他处理
     //设备对象是一个完整的对象，可以处理和拥有自己数据

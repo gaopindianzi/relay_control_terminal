@@ -27,6 +27,7 @@ signals:
 public:
     void SetDeviceInfo(QByteArray & data);
     int   GetDeviceRelayCount(void) { return relay_bitmask.size(); }
+    bool devcie_info_is_useful(void) { return bdevcie_info_is_useful; }
     QString GetDeviceAddress(void);
     QString GetDeviceName(void);
     void      SetDeviceName(QString newDeviceName);
@@ -48,6 +49,7 @@ private:
     QSharedPointer<QUdpSocket>      pUdpSocket;
     QSharedPointer<device_info_st>   pdev_info;
     QBitArray                                    relay_bitmask;
+    bool       bdevcie_info_is_useful;
 };
 
 typedef QSharedPointer<QRelayDeviceControl>   RelayDeviceSharePonterType;

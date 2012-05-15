@@ -8,14 +8,14 @@
 #define THISERROR            1
 #define THISASSERT          1
 
-unsigned int CRC16(unsigned char *Array,unsigned int Len);
+uint16_t CRC16(unsigned char *Array,unsigned int Len);
 
 
 
 
 
 QRelayDeviceControl::QRelayDeviceControl(QObject * parent) :
-    QObject(parent),pdev_info(new device_info_st)
+    QObject(parent),pdev_info(new device_info_st),bdevcie_info_is_useful(false)
 {
     QTimer *timer = new QTimer(this);
          connect(timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -32,15 +32,19 @@ void QRelayDeviceControl::update(void)
 {
     debuginfo(("updata..."));
 }
-void QRelayDeviceControl::SetDeviceName(QString newDeviceName)
+void QRelayDeviceControl::SetDeviceName(QString name)
 {
     device_info_st  newinfo;
-    memcpy(&newinfo,&pdev_info,sizeof(device_info_st));
-    memcpy(newinfo.host_name,newDeviceName.toAscii().data(),sizeof(newinfo.host_name)-1);
-    newinfo.host_name[sizeof(newinfo.host_name)-1] = 0;
+    memcpy(&newinfo,&pdev_info->command,sizeof(device_info_st));
+    name.resize(sizeof(newinfo.host_name));
+    size_t strlen = name.size();
+    memcpy(newinfo.host_name,name.toAscii().data(),strlen-1);
+    newinfo.host_name[strlen-1] = 0;
     newinfo.command = CMD_SET_DEVICE_INFO;
     newinfo.command_len = sizeof(device_info_st);
     newinfo.change_password = 0;
+    newinfo.to_host = 0;
+    newinfo.broadcast_time = 3;
     unsigned int crc = CRC16((unsigned char *)&newinfo,sizeof(device_info_st) - 2);
     newinfo.crc[0] = crc & 0xFF;
     newinfo.crc[1] = crc >> 8;
@@ -50,12 +54,16 @@ void QRelayDeviceControl::SetDeviceName(QString newDeviceName)
 void QRelayDeviceControl::SetGroup1Name(QString name)
 {
     device_info_st  newinfo;
-    memcpy(&newinfo,&pdev_info,sizeof(device_info_st));
-    memcpy(newinfo.group_name1,name.toAscii().data(),sizeof(newinfo.group_name1)-1);
-    newinfo.host_name[sizeof(newinfo.group_name1)-1] = 0;
+    memcpy(&newinfo,&pdev_info->command,sizeof(device_info_st));
+    name.resize(sizeof(newinfo.group_name1));
+    size_t strlen = name.size();
+    memcpy(newinfo.group_name1,name.toAscii().data(),strlen-1);
+    newinfo.group_name1[strlen-1] = 0;
     newinfo.command = CMD_SET_DEVICE_INFO;
     newinfo.command_len = sizeof(device_info_st);
     newinfo.change_password = 0;
+    newinfo.to_host = 0;
+    newinfo.broadcast_time = 3;
     unsigned int crc = CRC16((unsigned char *)&newinfo,sizeof(device_info_st) - 2);
     newinfo.crc[0] = crc & 0xFF;
     newinfo.crc[1] = crc >> 8;
@@ -65,12 +73,16 @@ void QRelayDeviceControl::SetGroup1Name(QString name)
 void QRelayDeviceControl::SetGroup2Name(QString name)
 {
     device_info_st  newinfo;
-    memcpy(&newinfo,&pdev_info,sizeof(device_info_st));
-    memcpy(newinfo.group_name2,name.toAscii().data(),sizeof(newinfo.group_name2)-1);
-    newinfo.host_name[sizeof(newinfo.group_name2)-1] = 0;
+    memcpy(&newinfo,&pdev_info->command,sizeof(device_info_st));
+    name.resize(sizeof(newinfo.group_name2));
+    size_t strlen = name.size();
+    memcpy(newinfo.group_name2,name.toAscii().data(),strlen-1);
+    newinfo.group_name2[strlen-1] = 0;
     newinfo.command = CMD_SET_DEVICE_INFO;
     newinfo.command_len = sizeof(device_info_st);
     newinfo.change_password = 0;
+    newinfo.to_host = 0;
+    newinfo.broadcast_time = 3;
     unsigned int crc = CRC16((unsigned char *)&newinfo,sizeof(device_info_st) - 2);
     newinfo.crc[0] = crc & 0xFF;
     newinfo.crc[1] = crc >> 8;
@@ -88,7 +100,7 @@ void QRelayDeviceControl::SendRxData(QByteArray & data)
 {
     device_info_st * pst = (device_info_st *)data.data();
     if(pst->command == CMD_SET_DEVICE_INFO) {
-        unsigned int crc = CRC16((unsigned char *)pst,pst->command_len - 2);
+        unsigned int crc = CRC16((unsigned char *)pst,sizeof(device_info_st) - 2);
         if(pst->command_len != data.size() || data.size() != sizeof(device_info_st)) {
             debugerror(("command len ERROR!pst->command_len=%d, data.size()=%d,sizeof(device_info_st)=%d,",
                         pst->command_len,data.size(),sizeof(device_info_st)));
@@ -101,7 +113,7 @@ void QRelayDeviceControl::SendRxData(QByteArray & data)
            // debuginfo(("crc ok."));
             SetDeviceInfo(data);
         } else {
-            debugerror(("crc ERROR."));
+            debugerror(("crc ERROR(0x%X",crc));
             return ;
         }
     } else if(pst->command == CMD_GET_DEVICE_INFO) {
@@ -136,7 +148,8 @@ void QRelayDeviceControl::SetDeviceInfo(QByteArray & data)
     hostaddrid.sprintf("%d",this->deviceport);
     hostaddrid = ":" + hostaddrid;
     hostaddrid = this->deviceaddr.toString() + hostaddrid;
-    debuginfo(("set device info."));
+    debuginfo(("set device info:%s",hostaddrid.toAscii().data()));
+    bdevcie_info_is_useful = true;
     emit DeviceInfoChanged(hostaddrid);
 }
 
@@ -162,9 +175,9 @@ QString QRelayDeviceControl::GetStatus(void)
     return devicestatus;
 }
 
-unsigned int CRC16(unsigned char *Array,unsigned int Len)
+uint16_t CRC16(unsigned char *Array,unsigned int Len)
 {
-    unsigned int  IX,IY,CRC;
+    uint16_t IX,IY,CRC;
     CRC=0xFFFF;//set all 1
     if (Len<=0) {
         CRC = 0;
@@ -172,7 +185,7 @@ unsigned int CRC16(unsigned char *Array,unsigned int Len)
         Len--;
         for (IX=0;IX<=Len;IX++)
         {
-            CRC=CRC^(unsigned int)(Array[IX]);
+            CRC=CRC^(uint16_t)(Array[IX]);
             for(IY=0;IY<=7;IY++) {
                 if ((CRC&1)!=0) {
                     CRC=(CRC>>1)^0xA001;
