@@ -11,7 +11,16 @@
 uint16_t CRC16(unsigned char *Array,unsigned int Len);
 
 
-
+void dumpthisdata(const char * buffer,int len)
+{
+    QString str;
+    for(int i=0;i<len;i++) {
+        QString tmp;
+        tmp.sprintf("%2X,",(unsigned char)buffer[i]);
+        str += tmp;
+    }
+    debuginfo(("%s",str.toAscii().data()));
+}
 
 
 QRelayDeviceControl::QRelayDeviceControl(QObject * parent) :
@@ -89,6 +98,18 @@ void QRelayDeviceControl::SetGroup2Name(QString name)
     //发送新的信息
     SendCommandData((const char *)&newinfo,sizeof(newinfo));
 }
+int  QRelayDeviceControl::GetIoOutNum(void)
+{
+    //根据板子的型号，确定输入输出的数量
+    switch(pdev_info->device_model) {
+    case EXT_BOARD_IS_2CHIN_2CHOUT_BOX:return 2;
+    case EXT_BOARD_IS_4CHIN_4CHOUT: return 4;
+    case EXT_BOARD_IS_8CHIN_8CHOUT_V2: return 8;
+    case EXT_BOARD_IS_16CHOUT:return 16;
+    default:
+        return 2;
+    }
+}
 
 void QRelayDeviceControl::SendCommandData(const char * buffer,int len)
 {
@@ -98,7 +119,7 @@ void QRelayDeviceControl::SendCommandData(const char * buffer,int len)
 
 void QRelayDeviceControl::SendRxData(QByteArray & data)
 {
-    device_info_st * pst = (device_info_st *)data.data();
+    device_info_st * pst = (device_info_st *)data.constData();
     if(pst->command == CMD_SET_DEVICE_INFO) {
         unsigned int crc = CRC16((unsigned char *)pst,sizeof(device_info_st) - 2);
         if(pst->command_len != data.size() || data.size() != sizeof(device_info_st)) {
@@ -106,14 +127,15 @@ void QRelayDeviceControl::SendRxData(QByteArray & data)
                         pst->command_len,data.size(),sizeof(device_info_st)));
             return ;
         } else {
-            //debugerror(("command len ok"));
+           // debugerror(("command len ok"));
         }
-      //  debuginfo(("Get:crc[0] = 0x%X,crc[1] = 0x%X\r\n",pst->crc[0],pst->crc[1]));
+        //debuginfo(("Get:crc[0] = 0x%X,crc[1] = 0x%X\r\n",pst->crc[0],pst->crc[1]));
         if((unsigned char)(crc>>8) == pst->crc[1] && (unsigned char)(crc&0xFF) == pst->crc[0]) {
-           // debuginfo(("crc ok."));
+            //debuginfo(("crc ok."));
             SetDeviceInfo(data);
         } else {
-            debugerror(("crc ERROR(0x%X",crc));
+            debugerror(("crc ERROR(0x%X)",crc));
+           // dumpthisdata((const char *)pst,data.size());
             return ;
         }
     } else if(pst->command == CMD_GET_DEVICE_INFO) {
@@ -123,16 +145,7 @@ void QRelayDeviceControl::SendRxData(QByteArray & data)
     //debuginfo(("%d:%s:%d:  send rx data",count++,deviceaddr.toString().toAscii().data(),deviceport));
 }
 
-void dumpthisdata(const char * buffer,int len)
-{
-    QString str;
-    for(int i=0;i<len;i++) {
-        QString tmp;
-        tmp.sprintf("%2X,",(unsigned char)buffer[i]);
-        str += tmp;
-    }
-    debuginfo(("%s",str.toAscii().data()));
-}
+
 
 void QRelayDeviceControl::SetDeviceInfo(QByteArray & data)
 {

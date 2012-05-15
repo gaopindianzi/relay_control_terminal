@@ -122,10 +122,11 @@ void QSetOffPushDelegate::buttonClicked(bool click)
 
 
 
-QRelayValueSingalChannalButton::QRelayValueSingalChannalButton(QWidget * parent)
+QRelayValueSingalChannalButton::QRelayValueSingalChannalButton(RelayDeviceSharePonterType pdev,QWidget * parent)
     : QPushButton(parent)
 {
     relay_bitmap = 0;
+    pdevice = pdev;
     this->setText("");
 }
 
@@ -141,8 +142,8 @@ void QRelayValueSingalChannalButton::paintEvent ( QPaintEvent * event )
     painter.drawText(rect(), Qt::AlignCenter, str);
 #endif
     QRect rct = rect();
-    int w = rct.width() / 5;
-    for(int i=0;i<5;i++) {
+    int w = rct.width() / pdevice->GetIoOutNum();
+    for(int i=0;i<pdevice->GetIoOutNum();i++) {
         if(this->relay_bitmap&(1<<i)) {
             QBrush brush(QColor(0,250,0));
             painter.fillRect(i*w,0,w,rct.height(),brush);
@@ -156,8 +157,8 @@ void QRelayValueSingalChannalButton::paintEvent ( QPaintEvent * event )
 
 int QRelayValueSingalChannalButton::mouseAtButtonPosition(int x)
 {
-    int star = (x / (this->width() / 5));
-    if (star < 0 || star > 5)
+    int star = (x / (this->width() / pdevice->GetIoOutNum()));
+    if (star < 0 || star > pdevice->GetIoOutNum())
         return -1;
 
     return star;
@@ -182,14 +183,8 @@ QWidget *QRelayValueSingalChannalButtonDelegate::createEditor(QWidget *parent,
                                      const QStyleOptionViewItem & /* option */,
                                      const QModelIndex &index) const
 {
-    if (qVariantCanConvert<RelayDeviceSharePonterType>(index.data())) {
-        QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(index.data());
-       // debuginfo(("createEditor:CAN convert TO Relay DEVICE"));
-        //debuginfo(("pdevice ip addr:%s",pdev->deviceaddr.toString().toAscii().data()));
-    } else {
-       // debugerror(("createEditor:NOT Can convert TO Relay DEVICE"));
-    }
-    QRelayValueSingalChannalButton *pushbutton = new QRelayValueSingalChannalButton(parent);
+    QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(index.data());
+    QRelayValueSingalChannalButton *pushbutton = new QRelayValueSingalChannalButton(pdev,parent);
     connect(pushbutton, SIGNAL(clicked ( bool )), this, SLOT(buttonClicked(bool)));
     return pushbutton;
 }
@@ -197,12 +192,6 @@ QWidget *QRelayValueSingalChannalButtonDelegate::createEditor(QWidget *parent,
 void QRelayValueSingalChannalButtonDelegate::setEditorData(QWidget *editor,
                                   const QModelIndex &index) const
 {
-    if (qVariantCanConvert<RelayDeviceSharePonterType>(index.data())) {
-        //QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<QSharedPointer<QRelayDeviceControl> >(index.data());
-        //debuginfo(("setEditorData:CAN convert TO Relay DEVICE"));
-    } else {
-       // debuginfo(("setEditorData:NOT Can convert TO Relay DEVICE"));
-    }
     QRelayValueSingalChannalButton *pushbutton = qobject_cast<QRelayValueSingalChannalButton *>(editor);
     pushbutton->relay_bitmap = index.model()->data(index).toUInt();
 }
@@ -210,20 +199,8 @@ void QRelayValueSingalChannalButtonDelegate::setEditorData(QWidget *editor,
 void QRelayValueSingalChannalButtonDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
                                  const QModelIndex &index) const
 {
-    if (qVariantCanConvert<RelayDeviceSharePonterType>(index.data())) {
-        //QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<QSharedPointer<QRelayDeviceControl> >(index.data());
-        debuginfo(("setModelData:CAN convert TO Relay DEVICE"));
-    } else {
-        debuginfo(("setModelData:NOT Can convert TO Relay DEVICE"));
-    }
     QRelayValueSingalChannalButton *pushbutton = qobject_cast<QRelayValueSingalChannalButton *>(editor);
-    //model->setData(index, pushbutton->relay_bitmap);
      index.model()->data(index) = pushbutton->relay_bitmap;
-}
-
-void QRelayValueSingalChannalButtonDelegate::emitCommitData()
-{
-   // emit commitData(qobject_cast<QWidget *>(sender()));
 }
 
 void QRelayValueSingalChannalButtonDelegate::buttonClicked(bool click)

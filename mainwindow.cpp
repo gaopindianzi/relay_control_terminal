@@ -10,7 +10,7 @@
 #include "QDeviceStatusDelegate.h"
 #include "debug.h"
 
-#define THISINFO             1
+#define THISINFO             0
 #define THISERROR           1
 #define THISASSERT          1
 
@@ -70,6 +70,7 @@ void MainWindow::CreateDevcieTable(void)
         deviceTable->setHorizontalHeaderLabels(labels);
         deviceTable->horizontalHeader()->setResizeMode(0, QHeaderView::Fixed);
         deviceTable->horizontalHeader()->resizeSection(0,25);
+        deviceTable->horizontalHeader()->resizeSection(1,150);
         deviceTable->horizontalHeader()->resizeSection(5,200);
         deviceTable->horizontalHeader()->resizeSection(6,60);
         deviceTable->horizontalHeader()->resizeSection(7,60);
@@ -142,8 +143,7 @@ void MainWindow::UdpreadPendingDatagrams()
              QHostAddress sender;
              quint16 senderPort;
 
-             pUdpSocket->readDatagram(datagram.data(), datagram.size(),
-                                     &sender, &senderPort);
+             pUdpSocket->readDatagram(datagram.data(), 1024,&sender, &senderPort);
 
              processTheDeviceData(datagram,sender,senderPort);
          }
@@ -158,7 +158,7 @@ void MainWindow::processTheDeviceData(QByteArray & data,
     QString str = sender.toString();
     str += ":";
     str += portstr;
-   // debuginfo(("%s",str.toAscii().data()));
+    debuginfo(("precess udp rx data len(%d)",data.size()));
     //根据IP地址和端口号，查找已经有的数据，如果有了，给它发消息，让他自己处理自己的事情
     QMap<QString,QSharedPointer<QRelayDeviceControl> >::const_iterator i = mydevicemap.find(str);
     if(i != mydevicemap.end()) {

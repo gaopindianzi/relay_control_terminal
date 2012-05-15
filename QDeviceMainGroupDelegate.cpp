@@ -48,7 +48,7 @@ void QDeviceNameDelegate::setModelData(QWidget *editor, QAbstractItemModel *mode
                                  const QModelIndex &index) const
 {
     QLineEdit *edit = qobject_cast<QLineEdit *>(editor);
-    debuginfo(("set device name:%s",edit->text().toAscii().data()));
+    //debuginfo(("set device name:%s",edit->text().toAscii().data()));
     QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(index.data());
     pdev->SetDeviceName(edit->text());
     model->setData(index, qVariantFromValue(pdev));
@@ -93,7 +93,9 @@ void QDeviceMainGroupDelegate::setEditorData(QWidget *editor,
 void QDeviceMainGroupDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
                                  const QModelIndex &index) const
 {
+    QLineEdit *edit = qobject_cast<QLineEdit *>(editor);
     QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(index.data());
+    pdev->SetGroup1Name(edit->text());
     model->setData(index, qVariantFromValue(pdev));
 }
 void QDeviceMainGroupDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
@@ -146,7 +148,9 @@ void QDeviceSlaveGroupDelegate::setEditorData(QWidget *editor,
 void QDeviceSlaveGroupDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
                                  const QModelIndex &index) const
 {
+    QLineEdit *edit = qobject_cast<QLineEdit *>(editor);
     QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(index.data());
+    pdev->SetGroup2Name(edit->text());
     model->setData(index, qVariantFromValue(pdev));
 }
 void QDeviceSlaveGroupDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,

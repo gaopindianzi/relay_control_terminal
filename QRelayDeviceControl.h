@@ -36,6 +36,7 @@ public:
     QString GetGroup2Name(void);
     void      SetGroup2Name(QString name);
     QString GetStatus(void);
+    int        GetIoOutNum(void);
 private:
     void      SendCommandData(const char * buffer,int len);
 private:

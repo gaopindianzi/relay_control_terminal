@@ -67,13 +67,14 @@ class QRelayValueSingalChannalButton : public QPushButton
 {
     Q_OBJECT
 public:
-    QRelayValueSingalChannalButton(QWidget * parent = 0 );
+    QRelayValueSingalChannalButton(RelayDeviceSharePonterType pdev,QWidget * parent = 0 );
 private:
     void paintEvent ( QPaintEvent * event );
 protected:
     void mousePressEvent ( QMouseEvent * event );
     int   mouseAtButtonPosition(int x);
 public:
+    QSharedPointer<QRelayDeviceControl>  pdevice;
     unsigned int relay_bitmap;
 };
 
@@ -87,17 +88,12 @@ class QRelayValueSingalChannalButtonDelegate : public CDeviceDelegate
 
 public:
     QRelayValueSingalChannalButtonDelegate(QObject *parent = 0);
-//! [0]
-
-//! [1]
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
                           const QModelIndex &index) const;
     void setEditorData(QWidget *editor, const QModelIndex &index) const;
     void setModelData(QWidget *editor, QAbstractItemModel *model,
                       const QModelIndex &index) const;
-//! [1] //! [2]
 private slots:
-    void emitCommitData();
     void buttonClicked ( bool );
 };
 
