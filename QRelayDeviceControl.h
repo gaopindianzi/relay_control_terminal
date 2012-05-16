@@ -37,8 +37,15 @@ public:
     void      SetGroup2Name(QString name);
     QString GetStatus(void);
     int        GetIoOutNum(void);
+    void      ReadIoOut(void);
+    void      ReadIoOutAck(QByteArray & data);
+    void      ConvertIoOutOneBitAndSendCmd(int bit);
+    void      ConvertIoOutOneBitAndSendCmdAck(QByteArray & data);
+    //void      MultiIoOutSet(unsigned int start_index,QBitArray bit_mask);
+    QBitArray   relay_bitmask;
 private:
     void      SendCommandData(const char * buffer,int len);
+    void      DeviceUpdate(void);
 private:
     QString devicename;
     QString devicegroup1;
@@ -49,7 +56,6 @@ private:
     quint16              deviceport;
     QSharedPointer<QUdpSocket>      pUdpSocket;
     QSharedPointer<device_info_st>   pdev_info;
-    QBitArray                                    relay_bitmask;
     bool       bdevcie_info_is_useful;
 };
 

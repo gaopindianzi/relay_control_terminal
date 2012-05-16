@@ -134,17 +134,18 @@ void QRelayValueSingalChannalButton::paintEvent ( QPaintEvent * event )
 {
 
     QPainter painter(this);
-#if 1
+
     painter.setPen(Qt::blue);
     painter.setFont(QFont("Arial", 18));
     QString str;
     str.sprintf("0x%02X",this->relay_bitmap);
     painter.drawText(rect(), Qt::AlignCenter, str);
-#endif
     QRect rct = rect();
+
     int w = rct.width() / pdevice->GetIoOutNum();
-    for(int i=0;i<pdevice->GetIoOutNum();i++) {
-        if(this->relay_bitmap&(1<<i)) {
+    this->pdevice->relay_bitmask.resize(this->pdevice->GetIoOutNum());
+    for(int i=0;i<pdevice->GetIoOutNum();i++) {        
+        if(this->pdevice->relay_bitmask[i]) {
             QBrush brush(QColor(0,250,0));
             painter.fillRect(i*w,0,w,rct.height(),brush);
         } else {
@@ -152,7 +153,6 @@ void QRelayValueSingalChannalButton::paintEvent ( QPaintEvent * event )
             painter.fillRect(i*w,0,w,rct.height(),brush);
         }
     }
-    //painter.drawLine(0,0,100,20);
 }
 
 int QRelayValueSingalChannalButton::mouseAtButtonPosition(int x)
@@ -170,6 +170,9 @@ void QRelayValueSingalChannalButton::mousePressEvent ( QMouseEvent * event )
     int x = mouseAtButtonPosition(pos);
     if(x >= 0 && x < 32) relay_bitmap ^= (1<<x);
     debuginfo(("mouse at position %d/%d=%drelay=0x%02X",pos,this->width(),x,relay_bitmap));
+    //发送指令，翻转这个位
+    pdevice->ConvertIoOutOneBitAndSendCmd(x);
+    //pdevice->relay_bitmask[x] = !pdevice->relay_bitmask[x];
     this->update();
 }
 

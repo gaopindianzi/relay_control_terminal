@@ -31,7 +31,8 @@ HEADERS  += mainwindow.h \
     CDeviceTableWidgetItem.h \
     QDeviceMainGroupDelegate.h \
     QIpAddrDelegate.h \
-    QDeviceStatusDelegate.h
+    QDeviceStatusDelegate.h \
+    modbus_interface.h
 
 FORMS    += mainwindow.ui
 
