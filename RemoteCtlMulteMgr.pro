@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     CDeviceTableWidgetItem.cpp \
     QDeviceMainGroupDelegate.cpp \
     QIpAddrDelegate.cpp \
-    QDeviceStatusDelegate.cpp
+    QDeviceStatusDelegate.cpp \
+    editparamdialog.cpp
 
 HEADERS  += mainwindow.h \
     debug.h \
@@ -32,8 +33,10 @@ HEADERS  += mainwindow.h \
     QDeviceMainGroupDelegate.h \
     QIpAddrDelegate.h \
     QDeviceStatusDelegate.h \
-    modbus_interface.h
+    modbus_interface.h \
+    editparamdialog.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    editparamdialog.ui
 
 RC_FILE = myapp.rc

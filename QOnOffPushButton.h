@@ -15,6 +15,8 @@ public:
     QSetOnPushButton(RelayDeviceSharePonterType pdev,QWidget * parent = 0 );
 private:
     //void paintEvent ( QPaintEvent * event );
+protected:
+    void mousePressEvent ( QMouseEvent * event );
 private:
     QSharedPointer<QRelayDeviceControl>  pdevice;
 };
@@ -26,6 +28,8 @@ public:
     QSetOFFPushButton(RelayDeviceSharePonterType pdev,QWidget * parent = 0 );
 private:
     //void paintEvent ( QPaintEvent * event );
+protected:
+    void mousePressEvent ( QMouseEvent * event );
 private:
     QSharedPointer<QRelayDeviceControl>  pdevice;
 };

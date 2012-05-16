@@ -11,6 +11,8 @@
 #include "QRelayDeviceControl.h"
 #include "CDeviceTableWidgetItem.h"
 #include <QMap>
+#include <QAction>
+#include <QMenu>
 
 namespace Ui {
     class MainWindow;
@@ -25,6 +27,8 @@ public:
     ~MainWindow();
 private:
     void CreateDevcieTable(void);
+    void CreateAction(void);
+    void CreateMenu(void);
     void manualAddDevice(int index);
     void InsertDevice(QSharedPointer<QRelayDeviceControl> & pdev);
 public:
@@ -33,6 +37,13 @@ public:
 private slots:
     void UdpreadPendingDatagrams();
     void DeviceInfoChanged(QString hostaddrID);
+    void Quit(void);
+    void EditDeviceParam(void);
+private:
+    QAction * quitact;
+    QAction * edit_device_param_act;
+    QMenu *fileMenu;
+    QMenu *toolsMenu;
 private:
     QWidget *centralWidget;
     //device table

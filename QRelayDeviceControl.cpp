@@ -30,8 +30,8 @@ QRelayDeviceControl::QRelayDeviceControl(QObject * parent) :
     bdevcie_info_is_useful(false),
     relay_bitmask_inited(false)
 {
-    QTimer *timer = new QTimer(this);
-         connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+    //QTimer *timer = new QTimer(this);
+         //connect(timer, SIGNAL(timeout()), this, SLOT(update()));
          //timer->start(1000);
 }
 void QRelayDeviceControl::InitDeviceAddress(QHostAddress & addr,quint16 port,QSharedPointer<QUdpSocket>  & psocket)
@@ -41,10 +41,6 @@ void QRelayDeviceControl::InitDeviceAddress(QHostAddress & addr,quint16 port,QSh
     deviceport  = port;
 }
 
-void QRelayDeviceControl::update(void)
-{
-    debuginfo(("updata..."));
-}
 void QRelayDeviceControl::SetDeviceName(QString name)
 {
     device_info_st  newinfo;
@@ -132,7 +128,7 @@ void QRelayDeviceControl::ConvertIoOutOneBitAndSendCmd(int bit)
     }
     pfc->pad = 0x00;
     unsigned int crc = CRC16(&mst->command_len,sb.size() - 3);
-    debuginfo(("send ConvertIoOutOneBitAndSendCmd CRC(0x%X)",crc));
+    //debuginfo(("send ConvertIoOutOneBitAndSendCmd CRC(0x%X)",crc));
     //dumpthisdata((const char *)mst,sb.size());
     mst->crc[0] = (unsigned char)(crc  & 0xFF);
     mst->crc[1] = (unsigned char)(crc >> 8);
@@ -146,7 +142,7 @@ void QRelayDeviceControl::ConvertIoOutOneBitAndSendCmdAck(QByteArray & data)
         debugerror(("convert io out ack data len error!"));
         return ;
     }
-    debuginfo(("convert io ack."));
+    //debuginfo(("convert io ack."));
     modbus_command_st  * mst = (modbus_command_st *)data.data();
     unsigned int crc = CRC16(&mst->command_len,buflen-3);
     if(mst->crc[0] != (unsigned char)(crc&0xFF) || mst->crc[1] != (unsigned char)(crc>>8)) {
@@ -167,7 +163,6 @@ void QRelayDeviceControl::ConvertIoOutOneBitAndSendCmdAck(QByteArray & data)
     } else {
         relay_bitmask[bit] = false;
     }
-    DeviceUpdate();
 }
 
 void QRelayDeviceControl::ReadIoOut(void)
@@ -196,7 +191,7 @@ void QRelayDeviceControl::ReadIoOut(void)
    // dumpthisdata((const char *)mst,sb.size());
     mst->crc[0] = (unsigned char)(crc  & 0xFF);
     mst->crc[1] = (unsigned char)(crc >> 8);
-    dumpthisdata((const char *)mst,sb.size());
+   // dumpthisdata((const char *)mst,sb.size());
     SendCommandData((const char *)mst,sb.size());
 }
 void QRelayDeviceControl::ReadIoOutAck(QByteArray & data)
@@ -224,7 +219,7 @@ void QRelayDeviceControl::ReadIoOutAck(QByteArray & data)
         return ;
     }
     //都正确了
-    debuginfo(("read io out,ALL OK,byte_count=%d",fc->byte_count));
+   // debuginfo(("read io out,ALL OK,byte_count=%d",fc->byte_count));
     int max = relay_bitmask.size();
     max = ((fc->byte_count*8) > max)?(fc->byte_count*8):max;
     relay_bitmask.resize(max);
@@ -269,17 +264,23 @@ void QRelayDeviceControl::MultiIoOutSet(unsigned int start_index,QBitArray bit_m
     unsigned int crc = CRC16(&mst->command_len,sb.size() - 3);
     mst->crc[0] = (unsigned char)(crc  & 0xFF);
     mst->crc[1] = (unsigned char)(crc >> 8);
-    dumpthisdata((const char *)mst,sb.size());
+    //dumpthisdata((const char *)mst,sb.size());
     SendCommandData((const char *)mst,sb.size());
 }
 
 void QRelayDeviceControl::MultiIoOutSetAck(QByteArray & data)
 {
-    int len = sizeof(modbus_command_st) + sizeof(modbus_tcp_head) + 6;
+    int len = sizeof(modbus_command_st) + sizeof(modbus_tcp_head) + 4;
     if(data.size() != len) {
         debugerror(("multi io set ack data error!"));
     } else {
-        debuginfo(("multi io set ack ok."));
+        modbus_command_st * mst = (modbus_command_st *)data.data();
+        unsigned int crc = CRC16(&mst->command_len,data.size() - 3);
+        if(mst->crc[0] != (unsigned char)(crc&0xFF) || mst->crc[1] != (unsigned char)(crc>>8)) {
+            debugerror(("MultiIoOutSetAck data CRC(0x%X) ERROR!",crc));
+        } else {
+            //debuginfo(("MultiIoOutSetAck ack ok."));
+        }
     }
 }
 
@@ -298,7 +299,7 @@ int  QRelayDeviceControl::GetIoOutNum(void)
 
 void QRelayDeviceControl::SendCommandData(const char * buffer,int len)
 {
-    debuginfo(("send command data to %s:%d",this->deviceaddr.toString().toAscii().data(),this->deviceport));
+    //debuginfo(("send command data to %s:%d",this->deviceaddr.toString().toAscii().data(),this->deviceport));
     this->pUdpSocket->writeDatagram(buffer,len,this->deviceaddr,this->deviceport);
 }
 
@@ -326,7 +327,7 @@ void QRelayDeviceControl::SendRxData(QByteArray & data)
         }
     } else if(pst->command == CMD_GET_DEVICE_INFO) {
     } else if(CMD_MODBUSPACK_SEND == pst->command) {
-        dumpthisdata((const char *)pst,data.size());
+        //dumpthisdata((const char *)pst,data.size());
         int minlen = sizeof(modbus_command_st) + sizeof(modbus_tcp_head);
         if(pst->command_len < minlen) {
             debugerror(("modbus command data size too small...ERROR!"));
@@ -375,7 +376,7 @@ void QRelayDeviceControl::DeviceUpdate(void)
     hostaddrid.sprintf("%d",this->deviceport);
     hostaddrid = ":" + hostaddrid;
     hostaddrid = this->deviceaddr.toString() + hostaddrid;
-    debuginfo(("set device info:%s",hostaddrid.toAscii().data()));
+    //debuginfo(("set device info:%s",hostaddrid.toAscii().data()));
     bdevcie_info_is_useful = true;
     emit DeviceInfoChanged(hostaddrid);
 }
@@ -383,6 +384,7 @@ void QRelayDeviceControl::DeviceUpdate(void)
 void QRelayDeviceControl::SetDeviceInfo(QByteArray & data)
 {
     memcpy(&pdev_info->command,data.constData(),sizeof(device_info_st));
+   // debuginfo(("set device info:device model:%d",pdev_info->device_model));
     pdev_info->host_name[63] = 0;
     pdev_info->group_name1[31] = 0;
     pdev_info->group_name2[31] = 0;

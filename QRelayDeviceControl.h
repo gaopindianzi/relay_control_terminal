@@ -21,7 +21,6 @@ public:
 public slots:
     void InitDeviceAddress(QHostAddress & addr,quint16 port,QSharedPointer<QUdpSocket>  & psocket);
     void SendRxData(QByteArray & data);
-    void update(void);
 signals:
     void DeviceInfoChanged(QString hostaddrID);
 public:

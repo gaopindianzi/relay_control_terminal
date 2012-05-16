@@ -30,7 +30,7 @@ QWidget *QCheckBoxDelegate::createEditor(QWidget *parent,
 {
     QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(index.data());
     QDeviceCheckBox * edit = new QDeviceCheckBox(parent);
-    edit->move(5,0);
+    //edit->move(5,0);
     edit->setText("");
     return edit;
 }
@@ -40,7 +40,7 @@ void QCheckBoxDelegate::setEditorData(QWidget *editor,
 {
     QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(index.data());
     QDeviceCheckBox *edit = qobject_cast<QDeviceCheckBox *>(editor);
-    edit->move(5,0);
+   // edit->move(5,0);
     edit->setText("");
    // debuginfo(("check box set edit data"));
     edit->setCheckState(Qt::Unchecked);

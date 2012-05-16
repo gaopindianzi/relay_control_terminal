@@ -8,6 +8,7 @@
 #include "QIpAddrDelegate.h"
 #include "QDeviceMainGroupDelegate.h"
 #include "QDeviceStatusDelegate.h"
+#include "editparamdialog.h"
 #include "debug.h"
 
 #define THISINFO             0
@@ -24,6 +25,8 @@ MainWindow::MainWindow(QWidget *parent) :
     setCentralWidget(centralWidget);
 
     CreateDevcieTable();
+    CreateAction();
+    CreateMenu();
 
     QGridLayout *mainLayout = new QGridLayout;
         mainLayout->addWidget(deviceGroupBox, 0, 0, 1, 2);
@@ -44,6 +47,40 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::CreateAction(void)
+{
+    this->quitact = new QAction(tr("&Quit"), this);
+    //addImagesAct->setShortcut(tr("Ctrl+A"));
+    connect(quitact, SIGNAL(triggered()), this, SLOT(Quit()));
+    //
+    this->edit_device_param_act = new QAction(tr("&EditDevice..."), this);
+    connect(edit_device_param_act, SIGNAL(triggered()), this, SLOT(EditDeviceParam()));
+}
+
+void MainWindow::CreateMenu(void)
+{
+    fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMenu->addAction(quitact);
+
+
+    toolsMenu = menuBar()->addMenu(tr("&Tools"));
+    toolsMenu->addAction(edit_device_param_act);
+    //toolsMenu->addSeparator();
+
+
+
+}
+void MainWindow::Quit(void)
+{
+    close();
+}
+
+void MainWindow::EditDeviceParam(void)
+{
+    EditParamDialog dialog;
+    dialog.exec();
 }
 
 void MainWindow::CreateDevcieTable(void)
