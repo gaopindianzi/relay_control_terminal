@@ -45,5 +45,16 @@ typedef struct _modbus_type_fc5_cmd
 	uint8_t pad;
 } modbus_type_fc5_cmd;
 
+typedef struct _modbus_type_fc15_cmd
+{
+    uint8_t slave_addr;
+    uint8_t function_code;
+    uint8_t ref_number_h;
+    uint8_t ref_number_l;
+    uint8_t bit_count_h;
+    uint8_t bit_count_l;
+    uint8_t byte_count;
+} modbus_type_fc15_cmd;
+
 
 #endif

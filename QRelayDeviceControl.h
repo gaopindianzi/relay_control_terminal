@@ -41,8 +41,10 @@ public:
     void      ReadIoOutAck(QByteArray & data);
     void      ConvertIoOutOneBitAndSendCmd(int bit);
     void      ConvertIoOutOneBitAndSendCmdAck(QByteArray & data);
-    //void      MultiIoOutSet(unsigned int start_index,QBitArray bit_mask);
+    void      MultiIoOutSet(unsigned int start_index,QBitArray bit_mask);
+    void      MultiIoOutSetAck(QByteArray & data);
     QBitArray   relay_bitmask;
+
 private:
     void      SendCommandData(const char * buffer,int len);
     void      DeviceUpdate(void);
@@ -57,6 +59,7 @@ private:
     QSharedPointer<QUdpSocket>      pUdpSocket;
     QSharedPointer<device_info_st>   pdev_info;
     bool       bdevcie_info_is_useful;
+    bool       relay_bitmask_inited;
 };
 
 typedef QSharedPointer<QRelayDeviceControl>   RelayDeviceSharePonterType;

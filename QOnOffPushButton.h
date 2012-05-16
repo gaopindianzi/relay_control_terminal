@@ -8,16 +8,25 @@
 #include "QRelayDeviceControl.h"
 #include "CDeviceDelegate.h"
 
-class QOnOffPushButton : public QPushButton
+class QSetOnPushButton : public QPushButton
 {
     Q_OBJECT
 public:
-    QOnOffPushButton(QWidget * parent = 0 );
-    bool SetOnOff(void);
+    QSetOnPushButton(RelayDeviceSharePonterType pdev,QWidget * parent = 0 );
 private:
-    void paintEvent ( QPaintEvent * event );
+    //void paintEvent ( QPaintEvent * event );
+private:
+    QSharedPointer<QRelayDeviceControl>  pdevice;
+};
+
+class QSetOFFPushButton : public QPushButton
+{
+    Q_OBJECT
 public:
-    bool onoff;
+    QSetOFFPushButton(RelayDeviceSharePonterType pdev,QWidget * parent = 0 );
+private:
+    //void paintEvent ( QPaintEvent * event );
+private:
     QSharedPointer<QRelayDeviceControl>  pdevice;
 };
 

@@ -13,29 +13,18 @@
 #define THISERROR            1
 #define THISASSERT          1
 
-QOnOffPushButton::QOnOffPushButton(QWidget * parent)
+QSetOnPushButton::QSetOnPushButton(RelayDeviceSharePonterType pdev,QWidget * parent )
     : QPushButton(parent)
 {
+    pdevice = pdev;
 }
 
-void QOnOffPushButton::paintEvent ( QPaintEvent * event )
+QSetOFFPushButton::QSetOFFPushButton(RelayDeviceSharePonterType pdev,QWidget * parent )
+    : QPushButton(parent)
 {
-    QPainter painter(this);
-    painter.setPen(Qt::blue);
-    painter.setFont(QFont("Arial", 18));
-    painter.drawText(rect(), Qt::AlignCenter, this->text());
+    pdevice = pdev;
 }
 
-bool QOnOffPushButton::SetOnOff(void)
-{
-    if(onoff) {
-        onoff = false;
-    } else {
-        onoff = true;
-    }
-    this->update();
-    return onoff;
-}
 
 
 
@@ -73,6 +62,7 @@ void QSetOnPushDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
 
 void QSetOnPushDelegate::buttonClicked(bool click)
 {
+    debuginfo(("set ALL ON."));
 }
 
 
@@ -109,6 +99,7 @@ void QSetOffPushDelegate::setModelData(QWidget *editor, QAbstractItemModel *mode
 
 void QSetOffPushDelegate::buttonClicked(bool click)
 {
+    debuginfo(("set ALL OFF."));
 }
 
 
@@ -196,7 +187,7 @@ void QRelayValueSingalChannalButtonDelegate::setEditorData(QWidget *editor,
                                   const QModelIndex &index) const
 {
     QRelayValueSingalChannalButton *pushbutton = qobject_cast<QRelayValueSingalChannalButton *>(editor);
-    pushbutton->relay_bitmap = index.model()->data(index).toUInt();
+    pushbutton->update();
 }
 
 void QRelayValueSingalChannalButtonDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
