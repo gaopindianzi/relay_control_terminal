@@ -2,9 +2,9 @@
 #include <QDebug>
 #include <QString>
 #include <QTimer>
-#include "debug.h"
 #include "modbus_interface.h"
 
+#include "debug.h"
 #define THISINFO                1
 #define THISERROR            1
 #define THISASSERT          1
@@ -28,7 +28,8 @@ QRelayDeviceControl::QRelayDeviceControl(QObject * parent) :
     QObject(parent),
     pdev_info(new device_info_st),
     bdevcie_info_is_useful(false),
-    relay_bitmask_inited(false)
+    relay_bitmask_inited(false),
+    is_checked(false)
 {
     //QTimer *timer = new QTimer(this);
          //connect(timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -39,6 +40,13 @@ void QRelayDeviceControl::InitDeviceAddress(QHostAddress & addr,quint16 port,QSh
     pUdpSocket = psocket;
     deviceaddr  = addr;
     deviceport  = port;
+}
+
+QString QRelayDeviceControl::GetHostAddressString(void)
+{
+    QString str;
+    str.sprintf(":%d",deviceport);
+    return deviceaddr.toString() + str;
 }
 
 void QRelayDeviceControl::SetDeviceName(QString name)

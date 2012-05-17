@@ -6,15 +6,20 @@
 #include <QModelIndex>
 #include <QCheckBox>
 #include <QTableWidgetItem>
+#include <QMouseEvent>
 #include "CDeviceDelegate.h"
+#include "QRelayDeviceControl.h"
 
 
 class QDeviceCheckBox : public QCheckBox
 {
     Q_OBJECT
 public:
-    QDeviceCheckBox ( QWidget * parent = 0 );
+    QDeviceCheckBox (RelayDeviceSharePonterType & pdev, QWidget * parent = 0 );
+protected:
+    void	mousePressEvent ( QMouseEvent * event );
 private:
+    RelayDeviceSharePonterType pdevice;
     //void paintEvent ( QPaintEvent * event );
 };
 

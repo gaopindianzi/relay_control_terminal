@@ -78,8 +78,21 @@ void MainWindow::Quit(void)
 }
 
 void MainWindow::EditDeviceParam(void)
-{
+{    
     EditParamDialog dialog;
+
+    this->update();
+
+    int row = deviceTable->rowCount();
+    for(int i=0;i<row;i++) {
+        QTableWidgetItem * item = deviceTable->item(i,0);
+        QVariant var = item->data(0);
+        QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(var);
+        if(pdev->is_checked) {
+            debuginfo(("insert this device."));
+            dialog.InsertDevice(pdev);
+        }
+    }
     dialog.exec();
 }
 

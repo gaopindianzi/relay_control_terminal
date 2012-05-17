@@ -29,6 +29,7 @@ public:
     bool devcie_info_is_useful(void) { return bdevcie_info_is_useful; }
     QString GetDeviceAddress(void);
     QString GetDeviceName(void);
+    QString GetHostAddressString(void);
     void      SetDeviceName(QString newDeviceName);
     QString GetGroup1Name(void);
     void      SetGroup1Name(QString name);
@@ -59,6 +60,8 @@ private:
     QSharedPointer<device_info_st>   pdev_info;
     bool       bdevcie_info_is_useful;
     bool       relay_bitmask_inited;
+public:
+    bool       is_checked;
 };
 
 typedef QSharedPointer<QRelayDeviceControl>   RelayDeviceSharePonterType;

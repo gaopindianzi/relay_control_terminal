@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     QDeviceMainGroupDelegate.cpp \
     QIpAddrDelegate.cpp \
     QDeviceStatusDelegate.cpp \
-    editparamdialog.cpp
+    editparamdialog.cpp \
+    QDeviceList.cpp
 
 HEADERS  += mainwindow.h \
     debug.h \
@@ -34,7 +35,8 @@ HEADERS  += mainwindow.h \
     QIpAddrDelegate.h \
     QDeviceStatusDelegate.h \
     modbus_interface.h \
-    editparamdialog.h
+    editparamdialog.h \
+    QDeviceList.h
 
 FORMS    += mainwindow.ui \
     editparamdialog.ui
