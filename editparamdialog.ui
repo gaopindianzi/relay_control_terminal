@@ -128,6 +128,19 @@
      <string>Device Model:</string>
     </property>
    </widget>
+   <widget class="QLabel" name="labelDevcieModel">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>20</y>
+      <width>291</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Device Model</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
@@ -233,7 +246,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QCheckBox" name="checkBoxUdpPort">
+   <widget class="QCheckBox" name="checkBoxLocalPort">
     <property name="geometry">
      <rect>
       <x>200</x>
@@ -321,7 +334,7 @@
   <tabstop>checkBoxGroup1Name</tabstop>
   <tabstop>checkBoxBroadcastPeriod</tabstop>
   <tabstop>checkBoxRemotePort</tabstop>
-  <tabstop>checkBoxUdpPort</tabstop>
+  <tabstop>checkBoxLocalPort</tabstop>
   <tabstop>checkBoxDeviceName</tabstop>
  </tabstops>
  <resources/>

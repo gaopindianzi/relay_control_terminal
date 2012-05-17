@@ -18,18 +18,27 @@ class QRelayDeviceControl : public QObject
     Q_OBJECT
 public:
     QRelayDeviceControl(QObject * parent);
+signals:
+    void DeviceInfoChanged(QString hostaddrID);
 public slots:
     void InitDeviceAddress(QHostAddress & addr,quint16 port,QSharedPointer<QUdpSocket>  & psocket);
     void SendRxData(QByteArray & data);
-signals:
-    void DeviceInfoChanged(QString hostaddrID);
+private slots:
+    void TimeoutUpdataInfo(void);
 public:
+    void GetDevcieInfoFormDevcie(void);
     void SetDeviceInfo(QByteArray & data);
     int   GetDeviceRelayCount(void) { return relay_bitmask.size(); }
     bool devcie_info_is_useful(void) { return bdevcie_info_is_useful; }
     QString GetDeviceAddress(void);
     QString GetDeviceName(void);
     QString GetHostAddressString(void);
+    QString GetBroadcastTime(void);
+    QString GetListionPort(void);
+    QString GetRemoteHostAddress(void);
+    QString GetRemoteHostPort(void);
+    QString GetDeviceTime(void);
+    void      WriteNewDeviceInfoToDevice(device_info_st * pst);
     void      SetDeviceName(QString newDeviceName);
     QString GetGroup1Name(void);
     void      SetGroup1Name(QString name);
@@ -43,8 +52,9 @@ public:
     void      ConvertIoOutOneBitAndSendCmdAck(QByteArray & data);
     void      MultiIoOutSet(unsigned int start_index,QBitArray bit_mask);
     void      MultiIoOutSetAck(QByteArray & data);
+    void      ResetDevice(void);
     QBitArray   relay_bitmask;
-
+    QSharedPointer<device_info_st> & GetDeviceInfo(void) { return pdev_info; }
 private:
     void      SendCommandData(const char * buffer,int len);
     void      DeviceUpdate(void);
@@ -60,8 +70,10 @@ private:
     QSharedPointer<device_info_st>   pdev_info;
     bool       bdevcie_info_is_useful;
     bool       relay_bitmask_inited;
+    int         online_timeout;
 public:
     bool       is_checked;
+    bool       is_online;
 };
 
 typedef QSharedPointer<QRelayDeviceControl>   RelayDeviceSharePonterType;

@@ -26,15 +26,37 @@ void dumpthisdata(const char * buffer,int len)
 
 QRelayDeviceControl::QRelayDeviceControl(QObject * parent) :
     QObject(parent),
-    pdev_info(new device_info_st),
     bdevcie_info_is_useful(false),
-    relay_bitmask_inited(false),
-    is_checked(false)
+    relay_bitmask_inited(false)
 {
-    //QTimer *timer = new QTimer(this);
-         //connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-         //timer->start(1000);
+    pdev_info = QSharedPointer<device_info_st>(new device_info_st);
+    QTimer *timer = new QTimer(this);
+         connect(timer, SIGNAL(timeout()), this, SLOT(TimeoutUpdataInfo()));
+         timer->start(1000);
+    is_checked = true;
+    online_timeout = 0;
+    is_online = false;
 }
+
+void QRelayDeviceControl::TimeoutUpdataInfo(void)
+{
+    //debuginfo(("timeout updata..."));
+    GetDevcieInfoFormDevcie();
+    ReadIoOut();
+    if(online_timeout > 0) {
+        online_timeout--;
+        devicestatus  = tr("On Line");
+        is_online = true;
+        DeviceUpdate();
+    } else {
+        debuginfo(("OffLine ..."));
+        devicestatus = tr("Off Line");
+        is_online = false;
+        DeviceUpdate();
+    }
+}
+
+
 void QRelayDeviceControl::InitDeviceAddress(QHostAddress & addr,quint16 port,QSharedPointer<QUdpSocket>  & psocket)
 {
     pUdpSocket = psocket;
@@ -47,6 +69,36 @@ QString QRelayDeviceControl::GetHostAddressString(void)
     QString str;
     str.sprintf(":%d",deviceport);
     return deviceaddr.toString() + str;
+}
+QString QRelayDeviceControl::GetBroadcastTime(void)
+{
+    QString str;
+    str.sprintf("%d",this->pdev_info->broadcast_time);
+    return str;
+}
+QString QRelayDeviceControl::GetListionPort(void)
+{
+    QString str;
+    unsigned int port = this->pdev_info->work_port[1];
+    port <<= 8;
+    port += this->pdev_info->work_port[0];
+    str.sprintf("%d", port);
+    return str;
+}
+QString QRelayDeviceControl::GetRemoteHostAddress(void)
+{
+    QString str(QString::fromAscii(&pdev_info->remote_host_addr[0]));
+    return str;
+}
+
+QString QRelayDeviceControl::GetRemoteHostPort(void)
+{
+    QString str;
+    unsigned int port = this->pdev_info->remote_host_port[1];
+    port <<= 8;
+    port += this->pdev_info->remote_host_port[0];
+    str.sprintf("%d", port);
+    return str;
 }
 
 void QRelayDeviceControl::SetDeviceName(QString name)
@@ -106,6 +158,43 @@ void QRelayDeviceControl::SetGroup2Name(QString name)
     //发送新的信息
     SendCommandData((const char *)&newinfo,sizeof(newinfo));
 }
+void QRelayDeviceControl::WriteNewDeviceInfoToDevice(device_info_st * pst)
+{
+    device_info_st  newinfo;
+    memcpy(&newinfo,&pst->command,sizeof(device_info_st));
+    newinfo.command = CMD_SET_DEVICE_INFO;
+    newinfo.command_len = sizeof(device_info_st);
+    newinfo.to_host = 0;
+    unsigned int crc = CRC16((unsigned char *)&newinfo,sizeof(device_info_st) - 2);
+    newinfo.crc[0] = crc & 0xFF;
+    newinfo.crc[1] = crc >> 8;
+    //发送新的信息
+    SendCommandData((const char *)&newinfo,sizeof(newinfo));
+}
+
+void QRelayDeviceControl::ResetDevice(void)
+{
+    reset_device_st rst;
+    rst.command = CMD_RESET_DEVICE;
+    rst.command_len = sizeof(reset_device_st);
+    for(unsigned int i=0;i<sizeof(rst.pad);i++) {
+        rst.pad[i] = (unsigned char)rand();
+    }
+    unsigned int crc = CRC16((unsigned char *)&rst,sizeof(reset_device_st) - 2);
+    rst.crc[0] = (unsigned char)(crc & 0xFF);
+    rst.crc[1] = (unsigned char)(crc >> 8);
+    //发送新的信息
+    dumpthisdata((const char*)&rst,sizeof(reset_device_st));
+    SendCommandData((const char *)&rst,sizeof(reset_device_st));
+}
+
+void QRelayDeviceControl::GetDevcieInfoFormDevcie(void)
+{
+    unsigned char buffer[32];
+    buffer[0] = CMD_GET_DEVICE_INFO;
+    SendCommandData((const char *)buffer,sizeof(buffer));
+}
+
 void QRelayDeviceControl::ConvertIoOutOneBitAndSendCmd(int bit)
 {
     QByteArray sb;
@@ -315,6 +404,7 @@ void QRelayDeviceControl::SendRxData(QByteArray & data)
 {
     device_info_st * pst = (device_info_st *)data.constData();
     if(pst->command == CMD_SET_DEVICE_INFO) {
+        //debuginfo(("cmd set device info ack."));
         unsigned int crc = CRC16((unsigned char *)pst,sizeof(device_info_st) - 2);
         if(pst->command_len != data.size() || data.size() != sizeof(device_info_st)) {
             debugerror(("command len ERROR!pst->command_len=%d, data.size()=%d,sizeof(device_info_st)=%d,",
@@ -327,13 +417,11 @@ void QRelayDeviceControl::SendRxData(QByteArray & data)
         if((unsigned char)(crc>>8) == pst->crc[1] && (unsigned char)(crc&0xFF) == pst->crc[0]) {
             //debuginfo(("crc ok."));
             SetDeviceInfo(data);
-            ReadIoOut();
         } else {
             debugerror(("crc ERROR(0x%X)",crc));
            // dumpthisdata((const char *)pst,data.size());
             return ;
         }
-    } else if(pst->command == CMD_GET_DEVICE_INFO) {
     } else if(CMD_MODBUSPACK_SEND == pst->command) {
         //dumpthisdata((const char *)pst,data.size());
         int minlen = sizeof(modbus_command_st) + sizeof(modbus_tcp_head);
@@ -355,6 +443,8 @@ void QRelayDeviceControl::SendRxData(QByteArray & data)
             ReadIoOutAck(data);
             if(!relay_bitmask_inited) {
                 ReadIoOut();
+            } else {
+                online_timeout = 10;
             }
         }
             break;
@@ -372,6 +462,7 @@ void QRelayDeviceControl::SendRxData(QByteArray & data)
             break;
         }
     } else if(CMD_RESET_DEVICE == pst->command) {
+        devicestatus  = tr("Reseting...");
     }
     //debuginfo(("%d:%s:%d:  send rx data",count++,deviceaddr.toString().toAscii().data(),deviceport));
     DeviceUpdate();
@@ -392,14 +483,35 @@ void QRelayDeviceControl::DeviceUpdate(void)
 void QRelayDeviceControl::SetDeviceInfo(QByteArray & data)
 {
     memcpy(&pdev_info->command,data.constData(),sizeof(device_info_st));
-   // debuginfo(("set device info:device model:%d",pdev_info->device_model));
+    //debuginfo(("set device info:device model:%d",pdev_info->device_model));
     pdev_info->host_name[63] = 0;
     pdev_info->group_name1[31] = 0;
     pdev_info->group_name2[31] = 0;
     devicename   = QString::fromAscii(&pdev_info->host_name[0]);
     devicegroup1 = QString::fromAscii(&pdev_info->group_name1[0]);
     devicegroup2 = QString::fromAscii(&pdev_info->group_name2[0]);
-    devicestatus  = tr("online.");
+
+    QString str;
+    const unsigned char * pch = pdev_info->local_ip;
+    str.sprintf("ip:%d-%d-%d-%d ",pch[3],pch[2],pch[1],pch[0]);
+    pch = pdev_info->net_mask;
+    QString netmask;
+    netmask.sprintf("netmask:%d-%d-%d-%d ",pch[3],pch[2],pch[1],pch[0]);
+    pch = pdev_info->gateway;
+    QString gateway;
+    gateway.sprintf("gateway:%d-%d-%d-%d ",pch[3],pch[2],pch[1],pch[0]);
+    pch = pdev_info->dns;
+    QString dns;
+    dns.sprintf("dns:%d-%d-%d-%d ",pch[3],pch[2],pch[1],pch[0]);
+
+
+    QString mac;
+    pch = pdev_info->mac;
+    mac.sprintf("%X-%X-%X-%X-%X-%X ",pch[0],pch[1],pch[2],pch[3],pch[4],pch[5]);
+
+    str += netmask + gateway + mac;
+
+    debuginfo(("%s",str.toAscii().data()));
 }
 
 QString QRelayDeviceControl::GetDeviceAddress(void)
@@ -422,6 +534,15 @@ QString QRelayDeviceControl::GetGroup2Name(void)
 QString QRelayDeviceControl::GetStatus(void)
 {
     return devicestatus;
+}
+
+QString QRelayDeviceControl::GetDeviceTime(void)
+{
+    QString str;
+    unsigned char * pbuf = this->pdev_info->device_time;
+    str.sprintf("%d-%d-%d %d-%d-%d",1900+pbuf[5],1+pbuf[4],pbuf[3],pbuf[2],pbuf[1],pbuf[0]);
+    debuginfo(("device time:%s",str.toAscii().data()));
+    return str;
 }
 
 uint16_t CRC16(unsigned char *Array,unsigned int Len)

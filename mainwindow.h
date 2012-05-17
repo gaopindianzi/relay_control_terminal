@@ -14,6 +14,10 @@
 #include <QAction>
 #include <QMenu>
 
+
+#define    APP_DISPLAY_TIME             1
+
+
 namespace Ui {
     class MainWindow;
 }
@@ -39,9 +43,11 @@ private slots:
     void DeviceInfoChanged(QString hostaddrID);
     void Quit(void);
     void EditDeviceParam(void);
+    void ClearDeviceTable(void);
 private:
     QAction * quitact;
     QAction * edit_device_param_act;
+    QAction * cleardevicetable;
     QMenu *fileMenu;
     QMenu *toolsMenu;
 private:

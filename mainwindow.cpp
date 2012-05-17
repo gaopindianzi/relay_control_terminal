@@ -11,7 +11,7 @@
 #include "editparamdialog.h"
 #include "debug.h"
 
-#define THISINFO             0
+#define THISINFO             1
 #define THISERROR           1
 #define THISASSERT          1
 
@@ -57,6 +57,9 @@ void MainWindow::CreateAction(void)
     //
     this->edit_device_param_act = new QAction(tr("&EditDevice..."), this);
     connect(edit_device_param_act, SIGNAL(triggered()), this, SLOT(EditDeviceParam()));
+
+    this->cleardevicetable = new QAction(tr("&Clear"), this);
+    connect(cleardevicetable, SIGNAL(triggered()), this, SLOT(ClearDeviceTable()));
 }
 
 void MainWindow::CreateMenu(void)
@@ -67,6 +70,7 @@ void MainWindow::CreateMenu(void)
 
     toolsMenu = menuBar()->addMenu(tr("&Tools"));
     toolsMenu->addAction(edit_device_param_act);
+    toolsMenu->addAction(cleardevicetable);
     //toolsMenu->addSeparator();
 
 
@@ -95,37 +99,58 @@ void MainWindow::EditDeviceParam(void)
     }
     dialog.exec();
 }
+void MainWindow::ClearDeviceTable(void)
+{
+    int rowcount = deviceTable->rowCount();
+    for(int i=0;i<rowcount;i++) {
+        deviceTable->removeRow(0);
+    }
+    mydevicemap.clear();
+}
 
 void MainWindow::CreateDevcieTable(void)
 {
+    unsigned int index = 0;
         deviceGroupBox = new QGroupBox(tr("DeviceTable"));
         deviceTable = new QTableWidget;
         deviceTable->setSelectionMode(QAbstractItemView::NoSelection);
-        deviceTable->setItemDelegateForColumn(0,new QCheckBoxDelegate(this));
-        deviceTable->setItemDelegateForColumn(1,new QDeviceNameDelegate(this));
-        deviceTable->setItemDelegateForColumn(2,new QIpAddressDelegate(this));
-        deviceTable->setItemDelegateForColumn(3,new QDeviceMainGroupDelegate(this));
-        deviceTable->setItemDelegateForColumn(4,new QDeviceSlaveGroupDelegate(this));
-        deviceTable->setItemDelegateForColumn(5,new QRelayValueSingalChannalButtonDelegate(this));
-        deviceTable->setItemDelegateForColumn(6,new QSetOnPushDelegate(this));
-        deviceTable->setItemDelegateForColumn(7,new QSetOffPushDelegate(this));
-        deviceTable->setItemDelegateForColumn(8,new QDeviceStatusDelegate(this));
+        deviceTable->setItemDelegateForColumn(index++,new QCheckBoxDelegate(this));
+        deviceTable->setItemDelegateForColumn(index++,new QDeviceNameDelegate(this));
+        deviceTable->setItemDelegateForColumn(index++,new QIpAddressDelegate(this));
+        deviceTable->setItemDelegateForColumn(index++,new QDeviceMainGroupDelegate(this));
+        deviceTable->setItemDelegateForColumn(index++,new QDeviceSlaveGroupDelegate(this));
+        deviceTable->setItemDelegateForColumn(index++,new QRelayValueSingalChannalButtonDelegate(this));
+        deviceTable->setItemDelegateForColumn(index++,new QSetOnPushDelegate(this));
+        deviceTable->setItemDelegateForColumn(index++,new QSetOffPushDelegate(this));
+        deviceTable->setItemDelegateForColumn(index++,new QDeviceStatusDelegate(this));
+#if APP_DISPLAY_TIME
+        deviceTable->setItemDelegateForColumn(index++,new QDeviceTimeDelegate(this));
+#endif
 
         QStringList labels;
     //! [22] //! [23]
         labels << tr("S") << tr("DeviceName") << tr("IpAddr")<<tr("Group1") << tr("Group2")<<tr("Control")<<tr("AllOn")<<tr("AllOff")<<tr("Status");
+#if APP_DISPLAY_TIME
+        labels << tr("DeviceTime");
+#endif
 
         deviceTable->horizontalHeader()->setDefaultSectionSize(100);
         deviceTable->setColumnCount(labels.size());
         deviceTable->setHorizontalHeaderLabels(labels);
         deviceTable->horizontalHeader()->setResizeMode(0, QHeaderView::Fixed);
-        deviceTable->horizontalHeader()->resizeSection(0,25);
-        deviceTable->horizontalHeader()->resizeSection(1,150);
-        deviceTable->horizontalHeader()->resizeSection(5,200);
-        deviceTable->horizontalHeader()->resizeSection(6,60);
-        deviceTable->horizontalHeader()->resizeSection(7,60);
-        deviceTable->horizontalHeader()->resizeSection(8,200);
-
+        index = 0;
+        deviceTable->horizontalHeader()->resizeSection(index++,25);
+        deviceTable->horizontalHeader()->resizeSection(index++,120);
+        deviceTable->horizontalHeader()->resizeSection(index++,100);
+        deviceTable->horizontalHeader()->resizeSection(index++,80);
+        deviceTable->horizontalHeader()->resizeSection(index++,80);
+        deviceTable->horizontalHeader()->resizeSection(index++,250);
+        deviceTable->horizontalHeader()->resizeSection(index++,60);
+        deviceTable->horizontalHeader()->resizeSection(index++,60);
+        deviceTable->horizontalHeader()->resizeSection(index++,50);
+#if APP_DISPLAY_TIME
+        deviceTable->horizontalHeader()->resizeSection(index++,120);
+#endif
         deviceTable->verticalHeader()->hide();
         //排版
         QVBoxLayout *layout = new QVBoxLayout;
@@ -149,16 +174,23 @@ void MainWindow::manualAddDevice(int index)
      QTableWidgetItem *item6 = new CDeviceTableWidgetItem(pdev);
      QTableWidgetItem *item7 = new CDeviceTableWidgetItem(pdev);
      QTableWidgetItem *item8 = new CDeviceTableWidgetItem(pdev);
+#if APP_DISPLAY_TIME
+     QTableWidgetItem *item9 = new CDeviceTableWidgetItem(pdev);
+#endif
      //
-     deviceTable->setItem(row, 0, item0);
-     deviceTable->setItem(row, 1, item1);
-     deviceTable->setItem(row, 2, item2);
-     deviceTable->setItem(row, 3, item3);
-     deviceTable->setItem(row, 4, item4);
-     deviceTable->setItem(row, 5, item5);
-     deviceTable->setItem(row, 6, item6);
-     deviceTable->setItem(row, 7, item7);
-     deviceTable->setItem(row, 8, item8);
+     int index = 0;
+     deviceTable->setItem(row, index++, item0);
+     deviceTable->setItem(row, index++, item1);
+     deviceTable->setItem(row, index++, item2);
+     deviceTable->setItem(row, index++, item3);
+     deviceTable->setItem(row, index++, item4);
+     deviceTable->setItem(row, index++, item5);
+     deviceTable->setItem(row, index++, item6);
+     deviceTable->setItem(row, index++, item7);
+     deviceTable->setItem(row, index++, item8);
+#if APP_DISPLAY_TIME
+     deviceTable->setItem(row, index++, item9);
+#endif
 
     // item0->setCheckState(Qt::Checked);
     // item2->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);//表格只读属性
@@ -169,6 +201,9 @@ void MainWindow::manualAddDevice(int index)
      deviceTable->openPersistentEditor(item6);  //不用双击就可以显示控件的形式
      deviceTable->openPersistentEditor(item7);
      deviceTable->openPersistentEditor(item8);
+#if APP_DISPLAY_TIME
+     //deviceTable->openPersistentEditor(item9);
+#endif
      //
      //添加信号
      //updateGeometries
@@ -231,17 +266,21 @@ void MainWindow::processTheDeviceData(QByteArray & data,
 
 void MainWindow::DeviceInfoChanged(QString  hostaddrID)
 {
-    debuginfo(("host:%s",hostaddrID.toAscii().data()));
+   // debuginfo(("host:%s",hostaddrID.toAscii().data()));
     QMap<QString,QSharedPointer<QRelayDeviceControl> >::const_iterator it = mydevicemap.find(hostaddrID);
     if(it != mydevicemap.end()) {
         int row = deviceTable->rowCount();
         for(int i=0;i<row;i++) {
-            QTableWidgetItem * item = deviceTable->item(i,1);
+            QTableWidgetItem * item = deviceTable->item(i,0);
             QVariant var = item->data(0);
             QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(var);
             if((*it) == pdev) {
                 QAbstractItemModel * model = deviceTable->model ();
-                for(int j=0;j<9;j++) {
+                int index_max = 9;
+#if APP_DISPLAY_TIME
+                index_max++;
+#endif
+                for(int j=0;j<index_max;j++) {
                     QModelIndex index = model->index(i,j);
                     deviceTable->update(index);
                 }

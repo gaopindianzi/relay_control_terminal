@@ -42,3 +42,5 @@ FORMS    += mainwindow.ui \
     editparamdialog.ui
 
 RC_FILE = myapp.rc
+
+OTHER_FILES +=

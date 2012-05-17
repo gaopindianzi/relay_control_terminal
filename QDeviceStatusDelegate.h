@@ -21,11 +21,43 @@ public:
     void setEditorData(QWidget *editor, const QModelIndex &index) const;
     void setModelData(QWidget *editor, QAbstractItemModel *model,
                       const QModelIndex &index) const;
-
+    void paint(QPainter *painter, const QStyleOptionViewItem &option,
+                             const QModelIndex &index) const;
 //! [1] //! [2]
 private slots:
     void buttonClicked ( bool );
 };
+
+
+
+
+
+
+
+
+class QDeviceTimeDelegate : public CDeviceDelegate
+{
+    Q_OBJECT
+
+public:
+    QDeviceTimeDelegate(QObject *parent = 0);
+//! [0]
+
+//! [1]
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+                          const QModelIndex &index) const;
+    void setEditorData(QWidget *editor, const QModelIndex &index) const;
+    void setModelData(QWidget *editor, QAbstractItemModel *model,
+                      const QModelIndex &index) const;
+    void paint(QPainter *painter, const QStyleOptionViewItem &option,
+                             const QModelIndex &index) const;
+signals:
+    void TextUpdata(QString str) const;
+//! [1] //! [2]
+private slots:
+    void buttonClicked ( bool );
+};
+
 
 
 #endif // QDEVCESTATUSDELEGATE_H

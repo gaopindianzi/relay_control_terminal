@@ -22,9 +22,16 @@ public:
     void InsertDevice(RelayDeviceSharePonterType & pdev);
 protected slots:
     void	itemClicked ( QListWidgetItem * item );
+    void ListCurrentItemChanged ( QListWidgetItem * current, QListWidgetItem * previous );
+protected slots:
+    void RemoveClicked(bool);
+    void ReadClicked(bool);
+    void WriteClicked(bool);
+    void ResetClicked(bool);
 private:
     Ui::EditParamDialog *ui;
     QListWidget * list_devices;
+    device_info_st    edit_info;
 };
 
 #endif // EDITPARAMDIALOG_H
