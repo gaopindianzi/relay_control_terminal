@@ -13,7 +13,7 @@
 
 #include "debug.h"
 
-#define THISINFO             1
+#define THISINFO             0
 #define THISERROR           1
 #define THISASSERT          1
 
