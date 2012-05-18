@@ -161,7 +161,7 @@ void QRelayDeviceControl::SetGroup2Name(QString name)
 void QRelayDeviceControl::WriteNewDeviceInfoToDevice(device_info_st * pst)
 {
     device_info_st  newinfo;
-    memcpy(&newinfo,&pst->command,sizeof(device_info_st));
+    memcpy(&newinfo,pst,sizeof(device_info_st));
     newinfo.command = CMD_SET_DEVICE_INFO;
     newinfo.command_len = sizeof(device_info_st);
     newinfo.to_host = 0;
@@ -169,7 +169,7 @@ void QRelayDeviceControl::WriteNewDeviceInfoToDevice(device_info_st * pst)
     newinfo.crc[0] = crc & 0xFF;
     newinfo.crc[1] = crc >> 8;
     //发送新的信息
-    SendCommandData((const char *)&newinfo,sizeof(newinfo));
+    SendCommandData((const char *)&newinfo,sizeof(device_info_st));
 }
 
 void QRelayDeviceControl::ResetDevice(void)
@@ -393,6 +393,17 @@ int  QRelayDeviceControl::GetIoOutNum(void)
         return 2;
     }
 }
+QString QRelayDeviceControl::GetDeviceModelName(void)
+{
+    //根据板子的型号，输出名字
+    switch(pdev_info->device_model) {
+    default:
+    case EXT_BOARD_IS_2CHIN_2CHOUT_BOX:return tr("2 ch dig input,2 ch relay output.");
+    case EXT_BOARD_IS_4CHIN_4CHOUT: return tr("4 ch dig input,4 ch relay output.");
+    case EXT_BOARD_IS_8CHIN_8CHOUT_V2: return tr("8 ch dig input,8 ch relay output.");
+    case EXT_BOARD_IS_16CHOUT:return tr("16 ch relay output.");
+    }
+}
 
 void QRelayDeviceControl::SendCommandData(const char * buffer,int len)
 {
@@ -463,6 +474,7 @@ void QRelayDeviceControl::SendRxData(QByteArray & data)
         }
     } else if(CMD_RESET_DEVICE == pst->command) {
         devicestatus  = tr("Reseting...");
+        online_timeout = 0;
     }
     //debuginfo(("%d:%s:%d:  send rx data",count++,deviceaddr.toString().toAscii().data(),deviceport));
     DeviceUpdate();
@@ -482,8 +494,8 @@ void QRelayDeviceControl::DeviceUpdate(void)
 
 void QRelayDeviceControl::SetDeviceInfo(QByteArray & data)
 {
+    debuginfo(("-----------updata device info-------------"));
     memcpy(&pdev_info->command,data.constData(),sizeof(device_info_st));
-    //debuginfo(("set device info:device model:%d",pdev_info->device_model));
     pdev_info->host_name[63] = 0;
     pdev_info->group_name1[31] = 0;
     pdev_info->group_name2[31] = 0;
@@ -504,12 +516,14 @@ void QRelayDeviceControl::SetDeviceInfo(QByteArray & data)
     QString dns;
     dns.sprintf("dns:%d-%d-%d-%d ",pch[3],pch[2],pch[1],pch[0]);
 
+    QString timeout;
+    timeout.sprintf("timeout=%d ",pdev_info->broadcast_time);
 
     QString mac;
     pch = pdev_info->mac;
     mac.sprintf("%X-%X-%X-%X-%X-%X ",pch[0],pch[1],pch[2],pch[3],pch[4],pch[5]);
 
-    str += netmask + gateway + mac;
+    str += netmask + gateway + mac + timeout;
 
     debuginfo(("%s",str.toAscii().data()));
 }

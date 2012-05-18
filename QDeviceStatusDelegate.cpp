@@ -42,6 +42,7 @@ void QDeviceStatusDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
         color.setRgb(255,0,0);
     }
     painter->save();
+    painter->eraseRect(rect);
     painter->setPen(color);
     painter->drawText(rect,Qt::AlignVCenter|Qt::AlignLeft,pdev->GetStatus());
     painter->restore();

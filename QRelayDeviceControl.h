@@ -46,6 +46,7 @@ public:
     void      SetGroup2Name(QString name);
     QString GetStatus(void);
     int        GetIoOutNum(void);
+    QString GetDeviceModelName(void);
     void      ReadIoOut(void);
     void      ReadIoOutAck(QByteArray & data);
     void      ConvertIoOutOneBitAndSendCmd(int bit);

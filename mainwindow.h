@@ -34,7 +34,7 @@ private:
     void CreateAction(void);
     void CreateMenu(void);
     void manualAddDevice(int index);
-    void InsertDevice(QSharedPointer<QRelayDeviceControl> & pdev);
+    void InsertDevice(QSharedPointer<QRelayDeviceControl> & pdev);    
 public:
     void InitUdpSocket(void);
     void processTheDeviceData(QByteArray & data,QHostAddress & sender,quint16 senderport);
@@ -43,10 +43,14 @@ private slots:
     void DeviceInfoChanged(QString hostaddrID);
     void Quit(void);
     void EditDeviceParam(void);
+    void EditDeviceIpconfig(void);
     void ClearDeviceTable(void);
+signals:
+    void DeviceUpdata(QSharedPointer<QRelayDeviceControl> & pdev);
 private:
     QAction * quitact;
     QAction * edit_device_param_act;
+    QAction * edit_device_ipconfig;
     QAction * cleardevicetable;
     QMenu *fileMenu;
     QMenu *toolsMenu;

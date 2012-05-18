@@ -58,6 +58,7 @@ void	EditParamDialog::itemClicked ( QListWidgetItem * item )
     ui->lineEditDeviceListionPort->setText(it->pdevice->GetListionPort());
     ui->lineEditHostAddress->setText(it->pdevice->GetRemoteHostAddress());
     ui->lineEditHostPort->setText(it->pdevice->GetRemoteHostPort());
+    ui->labelDevcieModel->setText(it->pdevice->GetDeviceModelName());
 }
 void EditParamDialog::ListCurrentItemChanged ( QListWidgetItem * current, QListWidgetItem * previous )
 {

@@ -9,6 +9,8 @@
 #include "QDeviceMainGroupDelegate.h"
 #include "QDeviceStatusDelegate.h"
 #include "editparamdialog.h"
+#include "qeditipconfigdialog.h"
+
 #include "debug.h"
 
 #define THISINFO             1
@@ -60,6 +62,9 @@ void MainWindow::CreateAction(void)
 
     this->cleardevicetable = new QAction(tr("&Clear"), this);
     connect(cleardevicetable, SIGNAL(triggered()), this, SLOT(ClearDeviceTable()));
+
+    this->edit_device_ipconfig = new QAction(tr("&Ipconfig..."), this);
+    connect(edit_device_ipconfig, SIGNAL(triggered()), this, SLOT(EditDeviceIpconfig()));
 }
 
 void MainWindow::CreateMenu(void)
@@ -70,8 +75,10 @@ void MainWindow::CreateMenu(void)
 
     toolsMenu = menuBar()->addMenu(tr("&Tools"));
     toolsMenu->addAction(edit_device_param_act);
+    toolsMenu->addAction(edit_device_ipconfig);
+    toolsMenu->addSeparator();
     toolsMenu->addAction(cleardevicetable);
-    //toolsMenu->addSeparator();
+
 
 
 
@@ -93,12 +100,28 @@ void MainWindow::EditDeviceParam(void)
         QVariant var = item->data(0);
         QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(var);
         if(pdev->is_checked) {
-            debuginfo(("insert this device."));
             dialog.InsertDevice(pdev);
         }
     }
     dialog.exec();
 }
+void MainWindow::EditDeviceIpconfig(void)
+{
+    QEditIpConfigDialog dialog;
+    this->update();
+
+    int row = deviceTable->rowCount();
+    for(int i=0;i<row;i++) {
+        QTableWidgetItem * item = deviceTable->item(i,0);
+        QVariant var = item->data(0);
+        QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(var);
+        if(pdev->is_checked) {
+            dialog.InsertDevice(pdev);
+        }
+    }
+    dialog.exec();
+}
+
 void MainWindow::ClearDeviceTable(void)
 {
     int rowcount = deviceTable->rowCount();
@@ -284,6 +307,7 @@ void MainWindow::DeviceInfoChanged(QString  hostaddrID)
                     QModelIndex index = model->index(i,j);
                     deviceTable->update(index);
                 }
+                emit DeviceUpdata(pdev);
                 break;
             }
         }
