@@ -113,7 +113,7 @@ void QRelayDeviceControl::SetDeviceName(QString name)
     newinfo.command_len = sizeof(device_info_st);
     newinfo.change_password = 0;
     newinfo.to_host = 0;
-    newinfo.broadcast_time = 3;
+    newinfo.change_ipconfig = 0;
     unsigned int crc = CRC16((unsigned char *)&newinfo,sizeof(device_info_st) - 2);
     newinfo.crc[0] = crc & 0xFF;
     newinfo.crc[1] = crc >> 8;
@@ -132,7 +132,7 @@ void QRelayDeviceControl::SetGroup1Name(QString name)
     newinfo.command_len = sizeof(device_info_st);
     newinfo.change_password = 0;
     newinfo.to_host = 0;
-    newinfo.broadcast_time = 3;
+    newinfo.change_ipconfig = 0;
     unsigned int crc = CRC16((unsigned char *)&newinfo,sizeof(device_info_st) - 2);
     newinfo.crc[0] = crc & 0xFF;
     newinfo.crc[1] = crc >> 8;
@@ -151,7 +151,7 @@ void QRelayDeviceControl::SetGroup2Name(QString name)
     newinfo.command_len = sizeof(device_info_st);
     newinfo.change_password = 0;
     newinfo.to_host = 0;
-    newinfo.broadcast_time = 3;
+    newinfo.change_ipconfig = 0;
     unsigned int crc = CRC16((unsigned char *)&newinfo,sizeof(device_info_st) - 2);
     newinfo.crc[0] = crc & 0xFF;
     newinfo.crc[1] = crc >> 8;
@@ -184,7 +184,7 @@ void QRelayDeviceControl::ResetDevice(void)
     rst.crc[0] = (unsigned char)(crc & 0xFF);
     rst.crc[1] = (unsigned char)(crc >> 8);
     //发送新的信息
-    dumpthisdata((const char*)&rst,sizeof(reset_device_st));
+    //dumpthisdata((const char*)&rst,sizeof(reset_device_st));
     SendCommandData((const char *)&rst,sizeof(reset_device_st));
 }
 
@@ -225,7 +225,7 @@ void QRelayDeviceControl::ConvertIoOutOneBitAndSendCmd(int bit)
     }
     pfc->pad = 0x00;
     unsigned int crc = CRC16(&mst->command_len,sb.size() - 3);
-    //debuginfo(("send ConvertIoOutOneBitAndSendCmd CRC(0x%X)",crc));
+    debuginfo(("send ConvertIoOutOneBitAndSendCmd CRC(0x%X)",crc));
     //dumpthisdata((const char *)mst,sb.size());
     mst->crc[0] = (unsigned char)(crc  & 0xFF);
     mst->crc[1] = (unsigned char)(crc >> 8);
@@ -407,7 +407,7 @@ QString QRelayDeviceControl::GetDeviceModelName(void)
 
 void QRelayDeviceControl::SendCommandData(const char * buffer,int len)
 {
-    //debuginfo(("send command data to %s:%d",this->deviceaddr.toString().toAscii().data(),this->deviceport));
+    debuginfo(("send command data to %s:%d",this->deviceaddr.toString().toAscii().data(),this->deviceport));
     this->pUdpSocket->writeDatagram(buffer,len,this->deviceaddr,this->deviceport);
 }
 
@@ -525,7 +525,7 @@ void QRelayDeviceControl::SetDeviceInfo(QByteArray & data)
 
     str += netmask + gateway + mac + timeout;
 
-    debuginfo(("%s",str.toAscii().data()));
+   // debuginfo(("%s",str.toAscii().data()));
 }
 
 QString QRelayDeviceControl::GetDeviceAddress(void)
@@ -555,7 +555,7 @@ QString QRelayDeviceControl::GetDeviceTime(void)
     QString str;
     unsigned char * pbuf = this->pdev_info->device_time;
     str.sprintf("%d-%d-%d %d-%d-%d",1900+pbuf[5],1+pbuf[4],pbuf[3],pbuf[2],pbuf[1],pbuf[0]);
-    debuginfo(("device time:%s",str.toAscii().data()));
+    //debuginfo(("device time:%s",str.toAscii().data()));
     return str;
 }
 
