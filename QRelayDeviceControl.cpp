@@ -5,7 +5,7 @@
 #include "modbus_interface.h"
 
 #include "debug.h"
-#define THISINFO                0
+#define THISINFO                1
 #define THISERROR            1
 #define THISASSERT          1
 
@@ -118,7 +118,9 @@ void QRelayDeviceControl::SetDeviceName(QString name)
     newinfo.crc[0] = crc & 0xFF;
     newinfo.crc[1] = crc >> 8;
     //发送新的信息
+    debuginfo(("send set device name start"));
     SendCommandData((const char *)&newinfo,sizeof(newinfo));
+    debuginfo(("send set device name end"));
 }
 void QRelayDeviceControl::SetGroup1Name(QString name)
 {
@@ -407,7 +409,7 @@ QString QRelayDeviceControl::GetDeviceModelName(void)
 
 void QRelayDeviceControl::SendCommandData(const char * buffer,int len)
 {
-    debuginfo(("send command data to %s:%d",this->deviceaddr.toString().toAscii().data(),this->deviceport));
+    //debuginfo(("send command data to %s:%d",this->deviceaddr.toString().toAscii().data(),this->deviceport));
     this->pUdpSocket->writeDatagram(buffer,len,this->deviceaddr,this->deviceport);
 }
 
@@ -494,7 +496,7 @@ void QRelayDeviceControl::DeviceUpdate(void)
 
 void QRelayDeviceControl::SetDeviceInfo(QByteArray & data)
 {
-    debuginfo(("-----------updata device info-------------"));
+    //debuginfo(("-----------updata device info-------------"));
     memcpy(&pdev_info->command,data.constData(),sizeof(device_info_st));
     pdev_info->host_name[63] = 0;
     pdev_info->group_name1[31] = 0;

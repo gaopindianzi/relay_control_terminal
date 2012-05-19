@@ -51,7 +51,7 @@ void QDeviceNameDelegate::setModelData(QWidget *editor, QAbstractItemModel *mode
     //debuginfo(("set device name:%s",edit->text().toAscii().data()));
     QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(index.data());
     pdev->SetDeviceName(edit->text());
-    model->setData(index, qVariantFromValue(pdev));
+   // model->setData(index, qVariantFromValue(pdev));
 }
 
 void QDeviceNameDelegate::buttonClicked(bool click)
@@ -96,7 +96,7 @@ void QDeviceMainGroupDelegate::setModelData(QWidget *editor, QAbstractItemModel 
     QLineEdit *edit = qobject_cast<QLineEdit *>(editor);
     QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(index.data());
     pdev->SetGroup1Name(edit->text());
-    model->setData(index, qVariantFromValue(pdev));
+    //model->setData(index, qVariantFromValue(pdev));
 }
 void QDeviceMainGroupDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
                          const QModelIndex &index) const

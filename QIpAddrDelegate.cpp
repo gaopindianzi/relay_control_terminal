@@ -37,7 +37,7 @@ void QIpAddressDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
                                  const QModelIndex &index) const
 {
     QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(index.data());
-    model->setData(index, qVariantFromValue(pdev));
+    //model->setData(index, qVariantFromValue(pdev));
 }
 
 void QIpAddressDelegate::buttonClicked(bool click)
