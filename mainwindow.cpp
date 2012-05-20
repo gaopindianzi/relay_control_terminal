@@ -10,10 +10,11 @@
 #include "QDeviceStatusDelegate.h"
 #include "editparamdialog.h"
 #include "qeditipconfigdialog.h"
+#include "qpasswordmangerdialog.h"
 
 #include "debug.h"
 
-#define THISINFO              0
+#define THISINFO             1
 #define THISERROR           1
 #define THISASSERT          1
 
@@ -65,6 +66,9 @@ void MainWindow::CreateAction(void)
 
     this->edit_device_ipconfig = new QAction(tr("&Ipconfig..."), this);
     connect(edit_device_ipconfig, SIGNAL(triggered()), this, SLOT(EditDeviceIpconfig()));
+
+    password_manger = new QAction(tr("&Password..."),this);
+    connect(password_manger,SIGNAL(triggered()),this,SLOT(PasswordConfig()));
 }
 
 void MainWindow::CreateMenu(void)
@@ -76,10 +80,17 @@ void MainWindow::CreateMenu(void)
     toolsMenu = menuBar()->addMenu(tr("&Tools"));
     toolsMenu->addAction(edit_device_param_act);
     toolsMenu->addAction(edit_device_ipconfig);
+    toolsMenu->addAction(password_manger);
     toolsMenu->addSeparator();
     toolsMenu->addAction(cleardevicetable);
 
-
+#if 0 //for debug
+    password_item itm;
+    itm.alias = "admin";
+    itm.pwd = "admin";
+    password_list.push_back(itm);
+#endif
+     //QList<password_item>   password_list;
 
 
 }
@@ -120,6 +131,20 @@ void MainWindow::EditDeviceIpconfig(void)
         }
     }
     dialog.exec();
+}
+
+void MainWindow::PasswordConfig(void)
+{
+    QPasswordMangerDialog dialog;
+    this->update();
+    dialog.InitPasswordList(password_list);
+    dialog.exec();
+    if(dialog.is_ok) {
+        password_list = dialog.GetPasswordList();
+        debuginfo(("is ok,get password count:%d",password_list.count()));
+    } else {
+        debuginfo(("is cancel"));
+    }
 }
 
 void MainWindow::ClearDeviceTable(void)
@@ -266,18 +291,19 @@ void MainWindow::processTheDeviceData(QByteArray & data,
     QString str = sender.toString();
     str += ":";
     str += portstr;
-    debuginfo(("precess udp rx data len(%d)",data.size()));
+    //debuginfo(("precess udp rx data len(%d)",data.size()));
+
     //根据IP地址和端口号，查找已经有的数据，如果有了，给它发消息，让他自己处理自己的事情
     QMap<QString,QSharedPointer<QRelayDeviceControl> >::const_iterator i = mydevicemap.find(str);
     if(i != mydevicemap.end()) {
         //debuginfo(("found device,send rx data"));
-        (*i)->SendRxData(data);
+        (*i)->SendRxData(data,this->password_list);
         //DeviceInfoChanged(str);
     } else {
-        debuginfo(("Not found device,insert it. and send msg"));
+        debuginfo(("Not found device, try to insert one device"));
         QSharedPointer<QRelayDeviceControl> pdev(new QRelayDeviceControl(this));
         pdev->InitDeviceAddress(sender,senderport,pUdpSocket);
-        pdev->SendRxData(data);
+        pdev->SendRxData(data,this->password_list);
         if(pdev->devcie_info_is_useful()) {
             mydevicemap.insert(str,pdev);
             InsertDevice(pdev);

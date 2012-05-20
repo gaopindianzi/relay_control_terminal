@@ -5,10 +5,12 @@
 #include <QSharedPointer>
 #include <QUdpSocket>
  #include <QBitArray>
+#include <QTimer>
 #include <QTableWidgetItem>
 #include "multimgr_device_dev.h"
 #include "CDeviceDelegate.h"
-
+#include "rc4.h"
+#include "PasswordItemDef.h"
 
 
 
@@ -22,7 +24,7 @@ signals:
     void DeviceInfoChanged(QString hostaddrID);
 public slots:
     void InitDeviceAddress(QHostAddress & addr,quint16 port,QSharedPointer<QUdpSocket>  & psocket);
-    void SendRxData(QByteArray & data);
+    int   SendRxData(QByteArray & data,QList<password_item> & pwdlist);
 private slots:
     void TimeoutUpdataInfo(void);
 public:
@@ -48,11 +50,11 @@ public:
     int        GetIoOutNum(void);
     QString GetDeviceModelName(void);
     void      ReadIoOut(void);
-    void      ReadIoOutAck(QByteArray & data);
+    int        ReadIoOutAck(QByteArray & data);
     void      ConvertIoOutOneBitAndSendCmd(int bit);
-    void      ConvertIoOutOneBitAndSendCmdAck(QByteArray & data);
+    int        ConvertIoOutOneBitAndSendCmdAck(QByteArray & data);
     void      MultiIoOutSet(unsigned int start_index,QBitArray bit_mask);
-    void      MultiIoOutSetAck(QByteArray & data);
+    int        MultiIoOutSetAck(QByteArray & data);
     void      ResetDevice(void);
     QBitArray   relay_bitmask;
     QSharedPointer<device_info_st> & GetDeviceInfo(void) { return pdev_info; }
@@ -72,6 +74,10 @@ private:
     bool       bdevcie_info_is_useful;
     bool       relay_bitmask_inited;
     int         online_timeout;
+    bool       need_encryption;
+    QString  password;
+    //QEncryptRc4    rc4;
+    QTimer * timer;
 public:
     bool       is_checked;
     bool       is_online;

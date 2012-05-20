@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>624</width>
-    <height>328</height>
+    <height>376</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -19,7 +19,7 @@
   <property name="maximumSize">
    <size>
     <width>624</width>
-    <height>328</height>
+    <height>380</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -31,7 +31,7 @@
      <x>10</x>
      <y>10</y>
      <width>181</width>
-     <height>301</height>
+     <height>326</height>
     </rect>
    </property>
    <property name="title">
@@ -42,7 +42,7 @@
    <property name="geometry">
     <rect>
      <x>200</x>
-     <y>250</y>
+     <y>270</y>
      <width>411</width>
      <height>61</height>
     </rect>
@@ -148,7 +148,7 @@
      <x>200</x>
      <y>70</y>
      <width>411</width>
-     <height>171</height>
+     <height>196</height>
     </rect>
    </property>
    <property name="title">
@@ -311,6 +311,52 @@
       <x>350</x>
       <y>140</y>
       <width>51</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBoxChnagePassword">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>170</y>
+      <width>126</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Change Password:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEditPassword">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>165</y>
+      <width>101</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>170</y>
+      <width>46</width>
+      <height>10</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Repeat:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEditPasswordAgain">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>165</y>
+      <width>113</width>
       <height>20</height>
      </rect>
     </property>

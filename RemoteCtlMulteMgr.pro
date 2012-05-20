@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     editparamdialog.cpp \
     QDeviceList.cpp \
     qeditipconfigdialog.cpp \
-    qpasswordmangerdialog.cpp
+    qpasswordmangerdialog.cpp \
+    rc4.cpp
 
 HEADERS  += mainwindow.h \
     debug.h \
@@ -40,7 +41,9 @@ HEADERS  += mainwindow.h \
     editparamdialog.h \
     QDeviceList.h \
     qeditipconfigdialog.h \
-    qpasswordmangerdialog.h
+    qpasswordmangerdialog.h \
+    rc4.h \
+    PasswordItemDef.h
 
 FORMS    += mainwindow.ui \
     editparamdialog.ui \

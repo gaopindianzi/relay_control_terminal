@@ -3,11 +3,12 @@
 #include <QString>
 #include <QTimer>
 #include "modbus_interface.h"
+#include "rc4.h"
 
 #include "debug.h"
-#define THISINFO                1
-#define THISERROR            1
-#define THISASSERT          1
+#define THISINFO               1
+#define THISERROR           1
+#define THISASSERT         1
 
 uint16_t CRC16(unsigned char *Array,unsigned int Len);
 
@@ -30,12 +31,15 @@ QRelayDeviceControl::QRelayDeviceControl(QObject * parent) :
     relay_bitmask_inited(false)
 {
     pdev_info = QSharedPointer<device_info_st>(new device_info_st);
-    QTimer *timer = new QTimer(this);
+    timer = new QTimer(this);
          connect(timer, SIGNAL(timeout()), this, SLOT(TimeoutUpdataInfo()));
          timer->start(1000);
     is_checked = true;
     online_timeout = 0;
     is_online = false;
+    need_encryption = false;
+
+    //rc4.SetKey((unsigned char *)"admin",strlen("admin"));
 }
 
 void QRelayDeviceControl::TimeoutUpdataInfo(void)
@@ -49,11 +53,12 @@ void QRelayDeviceControl::TimeoutUpdataInfo(void)
         is_online = true;
         DeviceUpdate();
     } else {
-        debuginfo(("OffLine ..."));
+       // debuginfo(("OffLine ..."));
         devicestatus = tr("Off Line");
         is_online = false;
         DeviceUpdate();
     }
+    timer->setInterval(1000);
 }
 
 
@@ -234,19 +239,19 @@ void QRelayDeviceControl::ConvertIoOutOneBitAndSendCmd(int bit)
     //dumpthisdata((const char *)mst,sb.size());
     SendCommandData((const char *)mst,sb.size());
 }
-void QRelayDeviceControl::ConvertIoOutOneBitAndSendCmdAck(QByteArray & data)
+int QRelayDeviceControl::ConvertIoOutOneBitAndSendCmdAck(QByteArray & data)
 {
     int buflen = sizeof(modbus_command_st) + sizeof(modbus_tcp_head) + sizeof(modbus_type_fc5_cmd) - 2;
     if(data.size() != buflen) {
         debugerror(("convert io out ack data len error!"));
-        return ;
+        return -1;
     }
     //debuginfo(("convert io ack."));
     modbus_command_st  * mst = (modbus_command_st *)data.data();
     unsigned int crc = CRC16(&mst->command_len,buflen-3);
     if(mst->crc[0] != (unsigned char)(crc&0xFF) || mst->crc[1] != (unsigned char)(crc>>8)) {
         debugerror(("convert io out data CRC(0x%X) ERROR!",crc));
-        return ;
+        return -1;
     }
     modbus_tcp_head * mh = (modbus_tcp_head *)GET_MODBUS_COMMAND_DATA(mst);
     modbus_type_fc5_cmd * pfc  = (modbus_type_fc5_cmd *)GET_MODBUS_DATA(mh);
@@ -262,6 +267,7 @@ void QRelayDeviceControl::ConvertIoOutOneBitAndSendCmdAck(QByteArray & data)
     } else {
         relay_bitmask[bit] = false;
     }
+    return 0;
 }
 
 void QRelayDeviceControl::ReadIoOut(void)
@@ -293,29 +299,29 @@ void QRelayDeviceControl::ReadIoOut(void)
    // dumpthisdata((const char *)mst,sb.size());
     SendCommandData((const char *)mst,sb.size());
 }
-void QRelayDeviceControl::ReadIoOutAck(QByteArray & data)
+int QRelayDeviceControl::ReadIoOutAck(QByteArray & data)
 {
     unsigned int rx_len  = data.size();
     if(rx_len < sizeof(modbus_command_st)) {
         debugerror(("read io out ack data < modbus_command_st size.ERROR!"));
-        return ;
+        return -1;
     }
     modbus_command_st * mst = (modbus_command_st *)data.data();
     //dumpthisdata((const char *)mst,data.size());
     unsigned int crc = CRC16(&mst->command_len,rx_len - 3);
     if(mst->crc[0] != (unsigned char)(crc&0xFF) || mst->crc[1] != (unsigned char)(crc>>8)) {
         debugerror(("read io out ack data CRC(0x%X) ERROR!",crc));
-        return ;
+        return -1;
     }
     modbus_tcp_head * mh = (modbus_tcp_head *)GET_MODBUS_COMMAND_DATA(mst);
     modbus_type_fc1_ack * fc = (modbus_type_fc1_ack *)GET_MODBUS_DATA(mh);
     if(rx_len < (sizeof(modbus_command_st) + sizeof(modbus_tcp_head) + 4 - 2)) {
         debugerror(("read io out ack data < (sizeof(modbus_command_st) + sizeof(modbus_tcp_head) + 2.ERROR"));
-        return ;
+        return -1;
     }
     if(rx_len < (sizeof(modbus_command_st) + sizeof(modbus_tcp_head) + fc->byte_count + 3 - 2)) {
         debugerror(("read io out ack data <  (sizeof(modbus_command_st) + sizeof(modbus_tcp_head) + fc->byte_count + 3 - 2.ERROR"));
-        return ;
+        return -1;
     }
     //都正确了
    // debuginfo(("read io out,ALL OK,byte_count=%d",fc->byte_count));
@@ -326,6 +332,7 @@ void QRelayDeviceControl::ReadIoOutAck(QByteArray & data)
         relay_bitmask[i] = (fc->bit_valus[i/8]&(1<<(i%8)))?true:false;
     }
     relay_bitmask_inited = true;
+    return 0;
 }
 
 
@@ -367,11 +374,13 @@ void QRelayDeviceControl::MultiIoOutSet(unsigned int start_index,QBitArray bit_m
     SendCommandData((const char *)mst,sb.size());
 }
 
-void QRelayDeviceControl::MultiIoOutSetAck(QByteArray & data)
+int QRelayDeviceControl::MultiIoOutSetAck(QByteArray & data)
 {
+    int ret = -1;
     int len = sizeof(modbus_command_st) + sizeof(modbus_tcp_head) + 4;
     if(data.size() != len) {
         debugerror(("multi io set ack data error!"));
+        return -1;
     } else {
         modbus_command_st * mst = (modbus_command_st *)data.data();
         unsigned int crc = CRC16(&mst->command_len,data.size() - 3);
@@ -379,8 +388,10 @@ void QRelayDeviceControl::MultiIoOutSetAck(QByteArray & data)
             debugerror(("MultiIoOutSetAck data CRC(0x%X) ERROR!",crc));
         } else {
             //debuginfo(("MultiIoOutSetAck ack ok."));
+            ret = 0;
         }
     }
+    return ret;
 }
 
 int  QRelayDeviceControl::GetIoOutNum(void)
@@ -410,55 +421,123 @@ QString QRelayDeviceControl::GetDeviceModelName(void)
 void QRelayDeviceControl::SendCommandData(const char * buffer,int len)
 {
     //debuginfo(("send command data to %s:%d",this->deviceaddr.toString().toAscii().data(),this->deviceport));
-    this->pUdpSocket->writeDatagram(buffer,len,this->deviceaddr,this->deviceport);
+    if(need_encryption) {
+        QByteArray buf;
+        buf.resize(len);
+        unsigned char key[256];
+        int keylen = strlen(this->password.toAscii().data());
+        memcpy(key,password.toAscii().data(),keylen);
+        QEncryptRc4 rcc;
+        rcc.SetKey((unsigned char *)key,keylen);
+        rcc.Encrypt((unsigned char *)buffer,(unsigned char *)buf.data(),len);
+        this->pUdpSocket->writeDatagram(buf.data(),len,this->deviceaddr,this->deviceport);
+    } else {
+        this->pUdpSocket->writeDatagram(buffer,len,this->deviceaddr,this->deviceport);
+    }
 }
 
-void QRelayDeviceControl::SendRxData(QByteArray & data)
+int QRelayDeviceControl::SendRxData(QByteArray & rawdata,QList<password_item> & pwdlist)
 {
+    int ret = -1;    
+
+    debuginfo(("rx data %d",rawdata.size()));
+
+    QByteArray data;
+
+    need_encryption = false;
+
+    bool use_pwd_list_pwd = false;
+    int pwd_count = pwdlist.count();
+    int pwd_index = 0;
+
+    QString alis;
+    QString passwordstr;
+
+    goto  last_config_password;
+
+encrypting_again:
+
+    need_encryption = true;
+
+    if(!use_pwd_list_pwd) {
+        passwordstr = this->password;
+        use_pwd_list_pwd = true;
+    } else {
+        if(pwd_index >= pwd_count) {
+            debuginfo(("not found password!"));
+            return -1;
+        } else {
+            alis = pwdlist.at(pwd_index).alias;
+            passwordstr = pwdlist.at(pwd_index++).pwd;
+        }
+    }
+    debuginfo(("use password:%s:%s",alis.toAscii().data(),passwordstr.toAscii().data()));
+
+    password = passwordstr;
+
+last_config_password:
+    if(need_encryption) {
+        data.resize(rawdata.size());
+        char * pstr = passwordstr.toAscii().data();
+        unsigned char pwdbuf[256];
+        int stringlen = passwordstr.size();
+        stringlen = (stringlen >= 256)?256:stringlen;
+        memcpy(pwdbuf,pstr,stringlen);
+        //dumpthisdata((const char *)pwdbuf,stringlen);
+        if(stringlen) {
+            debuginfo(("try to use pwd:%s,len = %d",pstr,stringlen));
+            QEncryptRc4 rc44;
+            rc44.SetKey((unsigned char *)pwdbuf,stringlen);
+            rc44.Encrypt((unsigned char *)rawdata.data(),(unsigned char *)data.data(),rawdata.size());
+            //dumpthisdata((const char *)data.data(),data.size());
+        } else {
+            goto encrypting_again;
+        }
+    } else {
+        data = rawdata;
+    }
+
     device_info_st * pst = (device_info_st *)data.constData();
+
     if(pst->command == CMD_SET_DEVICE_INFO) {
-        //debuginfo(("cmd set device info ack."));
         unsigned int crc = CRC16((unsigned char *)pst,sizeof(device_info_st) - 2);
         if(pst->command_len != data.size() || data.size() != sizeof(device_info_st)) {
-            debugerror(("command len ERROR!pst->command_len=%d, data.size()=%d,sizeof(device_info_st)=%d,",
-                        pst->command_len,data.size(),sizeof(device_info_st)));
-            return ;
-        } else {
-           // debugerror(("command len ok"));
-        }
-        //debuginfo(("Get:crc[0] = 0x%X,crc[1] = 0x%X\r\n",pst->crc[0],pst->crc[1]));
-        if((unsigned char)(crc>>8) == pst->crc[1] && (unsigned char)(crc&0xFF) == pst->crc[0]) {
-            //debuginfo(("crc ok."));
+            goto encrypting_again;
+        } else if((unsigned char)(crc>>8) == pst->crc[1] && (unsigned char)(crc&0xFF) == pst->crc[0]) {
             SetDeviceInfo(data);
         } else {
             debugerror(("crc ERROR(0x%X)",crc));
-           // dumpthisdata((const char *)pst,data.size());
-            return ;
+            goto encrypting_again;
         }
     } else if(CMD_MODBUSPACK_SEND == pst->command) {
-        //dumpthisdata((const char *)pst,data.size());
         int minlen = sizeof(modbus_command_st) + sizeof(modbus_tcp_head);
         if(pst->command_len < minlen) {
             debugerror(("modbus command data size too small...ERROR!"));
-            return ;
+            goto encrypting_again;
         }
         modbus_tcp_head * mh = (modbus_tcp_head *)GET_MODBUS_COMMAND_DATA(pst);
         switch(mh->function_code)
         {
         case 0x05: //单促发指令
         {
-            ConvertIoOutOneBitAndSendCmdAck(data);
+            if(ConvertIoOutOneBitAndSendCmdAck(data) != 0) {
+                goto encrypting_again;
+            }
             ReadIoOut();
+            ret = 0;
         }
             break;
         case 0x01:
         {
-            ReadIoOutAck(data);
+            if(ReadIoOutAck(data) != 0) {
+                goto encrypting_again;
+            }
             if(!relay_bitmask_inited) {
                 ReadIoOut();
             } else {
                 online_timeout = 10;
             }
+            ret = 0;
         }
             break;
         case 0x02:
@@ -467,19 +546,32 @@ void QRelayDeviceControl::SendRxData(QByteArray & data)
             break;
         case 0x0F:
         {
-            MultiIoOutSetAck(data);
+            if(MultiIoOutSetAck(data) != 0) {
+                goto encrypting_again;
+            }
             ReadIoOut();
+            ret = 0;
         }
             break;
         default:
             break;
         }
     } else if(CMD_RESET_DEVICE == pst->command) {
+        if(pst->command_len != data.size()) {
+            goto encrypting_again;
+        }
+        unsigned int crc = CRC16((unsigned char *)pst,sizeof(reset_device_st) - 2);
+        if((unsigned char)(crc>>8) != pst->crc[1] || (unsigned char)(crc&0xFF) != pst->crc[0]) {
+            goto encrypting_again;
+        }
         devicestatus  = tr("Reseting...");
         online_timeout = 0;
+        ret = 0;
+    } else {
+        goto encrypting_again;
     }
-    //debuginfo(("%d:%s:%d:  send rx data",count++,deviceaddr.toString().toAscii().data(),deviceport));
     DeviceUpdate();
+    return 0;
 }
 
 
@@ -490,7 +582,7 @@ void QRelayDeviceControl::DeviceUpdate(void)
     hostaddrid = ":" + hostaddrid;
     hostaddrid = this->deviceaddr.toString() + hostaddrid;
     //debuginfo(("set device info:%s",hostaddrid.toAscii().data()));
-    bdevcie_info_is_useful = true;
+
     emit DeviceInfoChanged(hostaddrid);
 }
 
@@ -526,6 +618,8 @@ void QRelayDeviceControl::SetDeviceInfo(QByteArray & data)
     mac.sprintf("%X-%X-%X-%X-%X-%X ",pch[0],pch[1],pch[2],pch[3],pch[4],pch[5]);
 
     str += netmask + gateway + mac + timeout;
+
+     bdevcie_info_is_useful = true;
 
    // debuginfo(("%s",str.toAscii().data()));
 }

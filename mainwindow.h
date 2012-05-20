@@ -13,10 +13,12 @@
 #include <QMap>
 #include <QAction>
 #include <QMenu>
-
+#include "PasswordItemDef.h"
 
 #define    APP_DISPLAY_TIME             1
 
+
+void dumpthisdata(const char * buffer,int len);
 
 namespace Ui {
     class MainWindow;
@@ -45,6 +47,7 @@ private slots:
     void EditDeviceParam(void);
     void EditDeviceIpconfig(void);
     void ClearDeviceTable(void);
+    void PasswordConfig(void);
 signals:
     void DeviceUpdata(QSharedPointer<QRelayDeviceControl> & pdev);
 private:
@@ -52,6 +55,7 @@ private:
     QAction * edit_device_param_act;
     QAction * edit_device_ipconfig;
     QAction * cleardevicetable;
+    QAction * password_manger;
     QMenu *fileMenu;
     QMenu *toolsMenu;
 private:
@@ -62,6 +66,7 @@ private:
 private:
     QSharedPointer<QUdpSocket>  pUdpSocket;
     QMap<QString,QSharedPointer<QRelayDeviceControl> >   mydevicemap;
+    QList<password_item>   password_list;
 private:
     Ui::MainWindow *ui;
 };

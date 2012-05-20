@@ -2,6 +2,7 @@
 #include "ui_editparamdialog.h"
 #include <QVBoxLayout>
 #include <QListWidgetItem>
+#include <QMessageBox>
 #include "QDeviceList.h"
 #include "multimgr_device_dev.h"
 
@@ -92,6 +93,14 @@ void EditParamDialog::WriteClicked(bool)
     if(list_devices->count() == 0) {
         return ;
     }
+    if(ui->checkBoxChnagePassword->isChecked()) {
+        if(ui->lineEditPassword->text() != ui->lineEditPasswordAgain->text()) {
+            QMessageBox box(QMessageBox::Warning,tr("Warning"),tr("The input password is not the equal!"));
+            box.exec();
+            return ;
+        }
+    }
+
     //遍历所有选中的项目
     QList<QListWidgetItem *> items = list_devices->selectedItems();
     for(int i=0;i<items.size();i++) {
@@ -138,9 +147,20 @@ void EditParamDialog::WriteClicked(bool)
             edit_info.broadcast_time = (unsigned char)(BroadcastPeriod&0xFF);
             debuginfo(("BroadcastPeriod  = %d",BroadcastPeriod));
         }
+        if(ui->checkBoxChnagePassword->isChecked()) {
+            if(ui->lineEditPassword->text().isEmpty()) {
+                memset(edit_info.password,0,sizeof(edit_info.password));
+                edit_info.cncryption_mode = 0;
+            } else {
+                QString pwd = ui->lineEditPassword->text();
+                pwd.resize(sizeof(edit_info.password));
+                memcpy(edit_info.password,pwd.toAscii().data(),sizeof(edit_info.password));
+                edit_info.cncryption_mode = 1;
+            }
+        } else {
+            edit_info.change_password = 0;
+        }
         edit_info.to_host = 0;
-        edit_info.change_password = 0;
-        edit_info.cncryption_mode = 0;
         edit_info.system_fun_option = 0;
         edit_info.change_ipconfig = 0;
         item->pdevice->WriteNewDeviceInfoToDevice(&edit_info);
