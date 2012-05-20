@@ -159,6 +159,7 @@ void MainWindow::ClearDeviceTable(void)
         deviceTable->removeRow(0);
     }
     mydevicemap.clear();
+    mydevicemap.empty();
 }
 
 void MainWindow::CreateDevcieTable(void)

@@ -84,13 +84,12 @@ QEncryptRc4::QEncryptRc4()
 
 void QEncryptRc4::UseKey(QString key)
 {
-    const char * val = key.toAscii().constData();
-    int len = strlen(val);
+    int len = key.length();
     if(key.isEmpty()) {
         return ;
     }
     for(int i=0;i<sbox_len;i++) {
-        this->kbox[i] = val[i % len];
+        this->kbox[i] = key.toAscii().data()[i % len];
     }
 }
 

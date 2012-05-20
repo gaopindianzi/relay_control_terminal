@@ -6,7 +6,7 @@
 #include "rc4.h"
 
 #include "debug.h"
-#define THISINFO               0
+#define THISINFO               1
 #define THISERROR           1
 #define THISASSERT         1
 
@@ -60,6 +60,7 @@ void QRelayDeviceControl::TimeoutUpdataInfo(void)
         is_online = false;
         DeviceUpdate();
     }
+    timer->setInterval(1000);
 }
 
 
@@ -473,7 +474,7 @@ int QRelayDeviceControl::SendRxData(QByteArray & rawdata,QList<password_item> & 
 
     need_encryption = false;
 
-    bool use_pwd_list_pwd = false;
+    bool use_pwd_list_pwd = true;
     int pwd_count = pwdlist.count();
     int pwd_index = 0;
 
@@ -488,10 +489,10 @@ encrypting_again:
 
     if(!use_pwd_list_pwd) {
         passwordstr = this->password;
-        use_pwd_list_pwd = true;
+        use_pwd_list_pwd = false;
     } else {
         if(pwd_index >= pwd_count) {
-            debuginfo(("not found password!"));
+            //debuginfo(("not found password!"));
             return -1;
         } else {
             alis = pwdlist.at(pwd_index).alias;
@@ -576,15 +577,24 @@ last_config_password:
             break;
         }
     } else if(CMD_RESET_DEVICE == pst->command) {
+        debuginfo(("reset command ack data..."));
         if(pst->command_len != data.size()) {
+            debuginfo(("reset data len error!"));
             goto encrypting_again;
         }
-        unsigned int crc = CRC16((unsigned char *)pst,sizeof(reset_device_st) - 2);
-        if((unsigned char)(crc>>8) != pst->crc[1] || (unsigned char)(crc&0xFF) != pst->crc[0]) {
+        unsigned int crc = CRC16((unsigned char *)pst,sizeof(reset_device_st) - 2);        
+        dumpthisdata((const char *)pst, (int)(data.size()));
+        debuginfo(("caled crc is : 0x%X",crc));
+        if(((reset_device_st *)data.data())->crc[0] != (unsigned char)(crc&0xFF) || ((reset_device_st *)data.data())->crc[1] != (unsigned char)(crc>>8)) {
+            debuginfo(("reset data crc error!"));
+            data.clear();
             goto encrypting_again;
         }
         devicestatus  = tr("Reseting...");
         online_timeout = 0;
+        timer->setInterval(5000);
+        data.clear();
+        debuginfo(("reset ack ok"));
         ret = 0;
     } else {
         goto encrypting_again;
