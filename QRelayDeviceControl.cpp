@@ -15,6 +15,9 @@ uint16_t CRC16(unsigned char *Array,unsigned int Len);
 
 void dumpthisdata(const char * buffer,int len)
 {
+    if(!THISINFO) {
+        return ;
+    }
     QString str;
     for(int i=0;i<len;i++) {
         QString tmp;
