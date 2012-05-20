@@ -121,22 +121,30 @@ void EditParamDialog::WriteClicked(bool)
         memcpy(&edit_info.command,&info->command,sizeof(device_info_st));
         //根据选项，修改参数，然后再写
         if(ui->checkBoxDeviceName->isChecked()) {
-            memcpy(edit_info.host_name,ui->lineEditDeviceName->text().toAscii().data(),sizeof(edit_info.host_name));
+            QString name = ui->lineEditDeviceName->text();
+            name.resize(sizeof(edit_info.host_name));
+            memcpy(edit_info.host_name,name.toAscii().data(),sizeof(edit_info.host_name));
             edit_info.host_name[sizeof(edit_info.host_name)-1] = 0;
             debuginfo(("change device name to : %s",edit_info.host_name));
         } else {
             debuginfo(("not change device name."));
         }
         if(ui->checkBoxGroup1Name->isChecked()) {
-            memcpy(edit_info.group_name1,ui->lineEditGroupName1->text().toAscii().data(),sizeof(edit_info.group_name1));
+            QString addr = ui->lineEditGroupName1->text();
+            addr.resize(sizeof(edit_info.group_name1) + 1);
+            memcpy(edit_info.group_name1,addr.toAscii().data(),sizeof(edit_info.group_name1));
             edit_info.host_name[sizeof(edit_info.group_name1) - 1] = 0;
         }
         if(ui->checkBoxGroup2Name->isChecked()) {
-            memcpy(edit_info.group_name2,ui->lineEditGroupName2->text().toAscii().data(),sizeof(edit_info.group_name2));
+            QString addr = ui->lineEditGroupName2->text();
+            addr.resize(sizeof(edit_info.group_name2) + 1);
+            memcpy(edit_info.group_name2,addr.toAscii().data(),sizeof(edit_info.group_name2));
             edit_info.host_name[sizeof(edit_info.group_name2) - 1] = 0;
         }
         if(ui->checkBoxRemoteIpAdddr->isChecked()) {
-            memcpy(edit_info.remote_host_addr,ui->lineEditHostAddress->text().toAscii().data(),sizeof(edit_info.remote_host_addr));
+            QString addr = ui->lineEditHostAddress->text();
+            addr.resize(sizeof(edit_info.remote_host_addr) + 1);
+            memcpy(edit_info.remote_host_addr,addr.toAscii().data(),sizeof(edit_info.remote_host_addr));
             edit_info.host_name[sizeof(edit_info.remote_host_addr) - 1] = 0;
         }
         //端口号
@@ -167,7 +175,7 @@ void EditParamDialog::WriteClicked(bool)
                 edit_info.cncryption_mode = 0;
             } else {
                 QString pwd = ui->lineEditPassword->text();
-                pwd.resize(sizeof(edit_info.password));
+                pwd.resize(sizeof(edit_info.password) + 1);
                 memcpy(edit_info.password,pwd.toAscii().data(),sizeof(edit_info.password));
                 unsigned int len = strlen(edit_info.password);
                 len = (len > sizeof(edit_info.password))?sizeof(edit_info.password):len;

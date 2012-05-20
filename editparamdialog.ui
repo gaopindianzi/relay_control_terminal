@@ -13,13 +13,13 @@
   <property name="minimumSize">
    <size>
     <width>624</width>
-    <height>328</height>
+    <height>363</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>624</width>
-    <height>380</height>
+    <height>363</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -384,17 +384,20 @@
   <tabstop>lineEditDeviceListionPort</tabstop>
   <tabstop>lineEditHostAddress</tabstop>
   <tabstop>lineEditHostPort</tabstop>
+  <tabstop>lineEditPassword</tabstop>
+  <tabstop>lineEditPasswordAgain</tabstop>
   <tabstop>pushButtonWrite</tabstop>
-  <tabstop>pushButtonReadDeviceInfo</tabstop>
   <tabstop>pushButtonResetDevice</tabstop>
+  <tabstop>pushButtonReadDeviceInfo</tabstop>
   <tabstop>pushButtonRemoveFormList</tabstop>
-  <tabstop>checkBoxGroup2Name</tabstop>
-  <tabstop>checkBoxRemoteIpAdddr</tabstop>
-  <tabstop>checkBoxGroup1Name</tabstop>
-  <tabstop>checkBoxBroadcastPeriod</tabstop>
-  <tabstop>checkBoxRemotePort</tabstop>
-  <tabstop>checkBoxLocalPort</tabstop>
   <tabstop>checkBoxDeviceName</tabstop>
+  <tabstop>checkBoxGroup1Name</tabstop>
+  <tabstop>checkBoxGroup2Name</tabstop>
+  <tabstop>checkBoxBroadcastPeriod</tabstop>
+  <tabstop>checkBoxRemoteIpAdddr</tabstop>
+  <tabstop>checkBoxChnagePassword</tabstop>
+  <tabstop>checkBoxLocalPort</tabstop>
+  <tabstop>checkBoxRemotePort</tabstop>
  </tabstops>
  <resources/>
  <connections/>

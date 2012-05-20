@@ -129,9 +129,11 @@ void QRelayDeviceControl::SetDeviceName(QString name)
     newinfo.crc[0] = crc & 0xFF;
     newinfo.crc[1] = crc >> 8;
     //发送新的信息
-    debuginfo(("send set device name start"));
+    ack_status = tr("sending set device name command...");
+    if(is_checked) {
+        emit DeviceAckStatus(ack_status);
+    }
     SendCommandData((const char *)&newinfo,sizeof(newinfo));
-    debuginfo(("send set device name end"));
 }
 void QRelayDeviceControl::SetGroup1Name(QString name)
 {
@@ -150,6 +152,10 @@ void QRelayDeviceControl::SetGroup1Name(QString name)
     newinfo.crc[0] = crc & 0xFF;
     newinfo.crc[1] = crc >> 8;
     //发送新的信息
+    ack_status = tr("sending set device group command...");
+    if(is_checked) {
+        emit DeviceAckStatus(ack_status);
+    }
     SendCommandData((const char *)&newinfo,sizeof(newinfo));
 }
 void QRelayDeviceControl::SetGroup2Name(QString name)
@@ -169,6 +175,10 @@ void QRelayDeviceControl::SetGroup2Name(QString name)
     newinfo.crc[0] = crc & 0xFF;
     newinfo.crc[1] = crc >> 8;
     //发送新的信息
+    ack_status = tr("sending set device group command...");
+    if(is_checked) {
+        emit DeviceAckStatus(ack_status);
+    }
     SendCommandData((const char *)&newinfo,sizeof(newinfo));
 }
 void QRelayDeviceControl::WriteNewDeviceInfoToDevice(device_info_st * pst)
@@ -182,6 +192,10 @@ void QRelayDeviceControl::WriteNewDeviceInfoToDevice(device_info_st * pst)
     newinfo.crc[0] = crc & 0xFF;
     newinfo.crc[1] = crc >> 8;
     //发送新的信息
+    ack_status = tr("start writing new device infamation command...");
+    if(is_checked) {
+        emit DeviceAckStatus(ack_status);
+    }
     SendCommandData((const char *)&newinfo,sizeof(device_info_st));
 }
 
@@ -197,14 +211,17 @@ void QRelayDeviceControl::ResetDevice(void)
     rst.crc[0] = (unsigned char)(crc & 0xFF);
     rst.crc[1] = (unsigned char)(crc >> 8);
     //发送新的信息
-    //dumpthisdata((const char*)&rst,sizeof(reset_device_st));
+    ack_status = tr("Reset device...");
+    if(is_checked) {
+        emit DeviceAckStatus(ack_status);
+    }
     SendCommandData((const char *)&rst,sizeof(reset_device_st));
 }
 
 void QRelayDeviceControl::GetDevcieInfoFormDevcie(void)
 {
     unsigned char buffer[32];
-    buffer[0] = CMD_GET_DEVICE_INFO;
+    buffer[0] = CMD_GET_DEVICE_INFO; 
     SendCommandData((const char *)buffer,sizeof(buffer));
 }
 
@@ -242,7 +259,10 @@ void QRelayDeviceControl::ConvertIoOutOneBitAndSendCmd(int bit)
     //dumpthisdata((const char *)mst,sb.size());
     mst->crc[0] = (unsigned char)(crc  & 0xFF);
     mst->crc[1] = (unsigned char)(crc >> 8);
-    //dumpthisdata((const char *)mst,sb.size());
+    ack_status = tr("set io out bits...");
+    if(is_checked) {
+        emit DeviceAckStatus(ack_status);
+    }
     SendCommandData((const char *)mst,sb.size());
 }
 int QRelayDeviceControl::ConvertIoOutOneBitAndSendCmdAck(QByteArray & data)
@@ -273,8 +293,6 @@ int QRelayDeviceControl::ConvertIoOutOneBitAndSendCmdAck(QByteArray & data)
     } else {
         relay_bitmask[bit] = false;
     }
-    ack_status = tr("Set Bit Successful.");
-    emit DeviceAckStatus(ack_status);
     return 0;
 }
 
@@ -304,7 +322,6 @@ void QRelayDeviceControl::ReadIoOut(void)
    // dumpthisdata((const char *)mst,sb.size());
     mst->crc[0] = (unsigned char)(crc  & 0xFF);
     mst->crc[1] = (unsigned char)(crc >> 8);
-   // dumpthisdata((const char *)mst,sb.size());
     SendCommandData((const char *)mst,sb.size());    
 }
 int QRelayDeviceControl::ReadIoOutAck(QByteArray & data)
@@ -340,8 +357,6 @@ int QRelayDeviceControl::ReadIoOutAck(QByteArray & data)
         relay_bitmask[i] = (fc->bit_valus[i/8]&(1<<(i%8)))?true:false;
     }
     relay_bitmask_inited = true;
-    ack_status = tr("Read Io Out Successful.");
-    emit DeviceAckStatus(ack_status);
     return 0;
 }
 
@@ -380,7 +395,10 @@ void QRelayDeviceControl::MultiIoOutSet(unsigned int start_index,QBitArray bit_m
     unsigned int crc = CRC16(&mst->command_len,sb.size() - 3);
     mst->crc[0] = (unsigned char)(crc  & 0xFF);
     mst->crc[1] = (unsigned char)(crc >> 8);
-    //dumpthisdata((const char *)mst,sb.size());
+    ack_status = tr("set io out bits...");
+    if(is_checked) {
+        emit DeviceAckStatus(ack_status);
+    }
     SendCommandData((const char *)mst,sb.size());
 }
 
@@ -401,8 +419,6 @@ int QRelayDeviceControl::MultiIoOutSetAck(QByteArray & data)
             ret = 0;
         }
     }
-    ack_status = tr("Set Multi Io Out Successful.");
-    emit DeviceAckStatus(ack_status);
     return ret;
 }
 
@@ -433,9 +449,6 @@ QString QRelayDeviceControl::GetDeviceModelName(void)
 void QRelayDeviceControl::SendCommandData(const char * buffer,int len)
 {
     //debuginfo(("send command data to %s:%d",this->deviceaddr.toString().toAscii().data(),this->deviceport));
-
-    ack_status = tr("sending commands...");
-    emit DeviceAckStatus(ack_status);
     if(need_encryption) {
         QEncryptRc4 rcc;
         rcc.UseKey(password);
@@ -587,7 +600,7 @@ void QRelayDeviceControl::DeviceUpdate(void)
     hostaddrid = ":" + hostaddrid;
     hostaddrid = this->deviceaddr.toString() + hostaddrid;
     //debuginfo(("set device info:%s",hostaddrid.toAscii().data()));
-    emit DeviceInfoChanged(hostaddrid);
+	emit DeviceInfoChanged(hostaddrid);
 }
 
 void QRelayDeviceControl::SetDeviceInfo(QByteArray & data)
@@ -623,11 +636,12 @@ void QRelayDeviceControl::SetDeviceInfo(QByteArray & data)
 
     str += netmask + gateway + mac + timeout;
 
-     bdevcie_info_is_useful = true;
+    bdevcie_info_is_useful = true;
 
-     ack_status = tr("devcie infomation is updated1");
-     emit DeviceAckStatus(ack_status);
-   // debuginfo(("%s",str.toAscii().data()));
+    ack_status = tr("device(") + this->GetDeviceAddress() + tr(") infomation is updated.");
+    if(is_checked) {
+        emit DeviceAckStatus(ack_status);
+    }
 }
 
 QString QRelayDeviceControl::GetDeviceAddress(void)
