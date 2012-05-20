@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>624</width>
-    <height>376</height>
+    <height>363</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -42,7 +42,7 @@
    <property name="geometry">
     <rect>
      <x>200</x>
-     <y>270</y>
+     <y>275</y>
      <width>411</width>
      <height>61</height>
     </rect>
@@ -361,6 +361,19 @@
      </rect>
     </property>
    </widget>
+  </widget>
+  <widget class="QLabel" name="labelStatusBar">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>345</y>
+     <width>601</width>
+     <height>10</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>status:</string>
+   </property>
   </widget>
  </widget>
  <tabstops>

@@ -14,7 +14,7 @@
 
 #include "debug.h"
 
-#define THISINFO             1
+#define THISINFO            0
 #define THISERROR           1
 #define THISASSERT          1
 
@@ -42,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
        // manualAddDevice(1);
        // manualAddDevice(2);
 
+        statusBar()->showMessage(tr("Ready"));
 
         //初始化UDP接口
         InitUdpSocket();
@@ -50,6 +51,10 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+void MainWindow::DevcieAckStstus(QString ackstr)
+{
+    statusBar()->showMessage(tr("Status:")+ackstr);
 }
 
 void MainWindow::CreateAction(void)
@@ -84,7 +89,7 @@ void MainWindow::CreateMenu(void)
     toolsMenu->addSeparator();
     toolsMenu->addAction(cleardevicetable);
 
-#if 0 //for debug
+#if      0 //for debug
     password_item itm;
     itm.alias = "admin";
     itm.pwd = "admin";
@@ -257,6 +262,7 @@ void MainWindow::manualAddDevice(int index)
      //updateGeometries
      //modelReset
      connect(pdev.data(),SIGNAL(DeviceInfoChanged(QString)),this,SLOT(DeviceInfoChanged(QString))); //,Qt::QueuedConnection);
+     connect(pdev.data(),SIGNAL(DeviceAckStatus(QString)),this,SLOT(DevcieAckStstus(QString)));
  }
 
 void MainWindow::InitUdpSocket(void)

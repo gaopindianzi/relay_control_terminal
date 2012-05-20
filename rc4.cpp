@@ -1,9 +1,13 @@
 #include "mainwindow.h"
+#include <QString>
 #include "rc4.h"
 
 
-#define THISINFO        0
-#define THISASSERT      0
+#include "debug.h"
+
+#define THISINFO             1
+#define THISERROR           1
+#define THISASSERT          1
 
 
 #if 0
@@ -78,24 +82,23 @@ QEncryptRc4::QEncryptRc4()
 
 }
 
-void QEncryptRc4::SetKey(unsigned char * key,int keylen)
+void QEncryptRc4::UseKey(QString key)
 {
-    int i;
-    /*
-     * 由于密钥串的长度较短，所以在初始化时是循环利用的。
-     */
-    for (i = 0; i < sbox_len; i++)
-        this->kbox[i] = key[i % keylen];
+    const char * val = key.toAscii().constData();
+    int len = strlen(val);
+    for(int i=0;i<sbox_len;i++) {
+        this->kbox[i] = val[i % len];
+    }
 }
 
-void QEncryptRc4::Encrypt(const unsigned char * source,unsigned char * target,int len)
+void QEncryptRc4::Encrypt(const QByteArray & source,QByteArray & target)
 {
-
     int i = 0, j = 0, t, index = 0;
     unsigned char tmp;
 
-    if (source == NULL || target == NULL || len <= 0)
-        return;
+    int len = source.size();
+
+    target.resize(len);
 
     init_sbox();
 

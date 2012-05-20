@@ -6,7 +6,7 @@
 #include "rc4.h"
 
 #include "debug.h"
-#define THISINFO               1
+#define THISINFO               0
 #define THISERROR           1
 #define THISASSERT         1
 
@@ -39,6 +39,7 @@ QRelayDeviceControl::QRelayDeviceControl(QObject * parent) :
     is_online = false;
     need_encryption = false;
 
+    ack_status = tr("none.");
     //rc4.SetKey((unsigned char *)"admin",strlen("admin"));
 }
 
@@ -94,6 +95,11 @@ QString QRelayDeviceControl::GetRemoteHostAddress(void)
 {
     QString str(QString::fromAscii(&pdev_info->remote_host_addr[0]));
     return str;
+}
+
+QString QRelayDeviceControl::GetAckStatus(void)
+{
+    return ack_status;
 }
 
 QString QRelayDeviceControl::GetRemoteHostPort(void)
@@ -267,6 +273,8 @@ int QRelayDeviceControl::ConvertIoOutOneBitAndSendCmdAck(QByteArray & data)
     } else {
         relay_bitmask[bit] = false;
     }
+    ack_status = tr("Set Bit Successful.");
+    emit DeviceAckStatus(ack_status);
     return 0;
 }
 
@@ -297,7 +305,7 @@ void QRelayDeviceControl::ReadIoOut(void)
     mst->crc[0] = (unsigned char)(crc  & 0xFF);
     mst->crc[1] = (unsigned char)(crc >> 8);
    // dumpthisdata((const char *)mst,sb.size());
-    SendCommandData((const char *)mst,sb.size());
+    SendCommandData((const char *)mst,sb.size());    
 }
 int QRelayDeviceControl::ReadIoOutAck(QByteArray & data)
 {
@@ -332,6 +340,8 @@ int QRelayDeviceControl::ReadIoOutAck(QByteArray & data)
         relay_bitmask[i] = (fc->bit_valus[i/8]&(1<<(i%8)))?true:false;
     }
     relay_bitmask_inited = true;
+    ack_status = tr("Read Io Out Successful.");
+    emit DeviceAckStatus(ack_status);
     return 0;
 }
 
@@ -391,6 +401,8 @@ int QRelayDeviceControl::MultiIoOutSetAck(QByteArray & data)
             ret = 0;
         }
     }
+    ack_status = tr("Set Multi Io Out Successful.");
+    emit DeviceAckStatus(ack_status);
     return ret;
 }
 
@@ -421,15 +433,16 @@ QString QRelayDeviceControl::GetDeviceModelName(void)
 void QRelayDeviceControl::SendCommandData(const char * buffer,int len)
 {
     //debuginfo(("send command data to %s:%d",this->deviceaddr.toString().toAscii().data(),this->deviceport));
+
+    ack_status = tr("sending commands...");
+    emit DeviceAckStatus(ack_status);
     if(need_encryption) {
-        QByteArray buf;
-        buf.resize(len);
-        unsigned char key[256];
-        int keylen = strlen(this->password.toAscii().data());
-        memcpy(key,password.toAscii().data(),keylen);
         QEncryptRc4 rcc;
-        rcc.SetKey((unsigned char *)key,keylen);
-        rcc.Encrypt((unsigned char *)buffer,(unsigned char *)buf.data(),len);
+        rcc.UseKey(password);
+        QByteArray src,buf;
+        src.resize(len);
+        memcpy(src.data(),buffer,len);
+        rcc.Encrypt(src,buf);
         this->pUdpSocket->writeDatagram(buf.data(),len,this->deviceaddr,this->deviceport);
     } else {
         this->pUdpSocket->writeDatagram(buffer,len,this->deviceaddr,this->deviceport);
@@ -438,9 +451,9 @@ void QRelayDeviceControl::SendCommandData(const char * buffer,int len)
 
 int QRelayDeviceControl::SendRxData(QByteArray & rawdata,QList<password_item> & pwdlist)
 {
-    int ret = -1;    
+    int ret = -1;
 
-    debuginfo(("rx data %d",rawdata.size()));
+    //debuginfo(("rx data %d",rawdata.size()));
 
     QByteArray data;
 
@@ -471,25 +484,17 @@ encrypting_again:
             passwordstr = pwdlist.at(pwd_index++).pwd;
         }
     }
-    debuginfo(("use password:%s:%s",alis.toAscii().data(),passwordstr.toAscii().data()));
+    //debuginfo(("use password:%s:%s",alis.toAscii().data(),passwordstr.toAscii().data()));
 
     password = passwordstr;
 
 last_config_password:
     if(need_encryption) {
-        data.resize(rawdata.size());
-        char * pstr = passwordstr.toAscii().data();
-        unsigned char pwdbuf[256];
-        int stringlen = passwordstr.size();
-        stringlen = (stringlen >= 256)?256:stringlen;
-        memcpy(pwdbuf,pstr,stringlen);
-        //dumpthisdata((const char *)pwdbuf,stringlen);
-        if(stringlen) {
-            debuginfo(("try to use pwd:%s,len = %d",pstr,stringlen));
-            QEncryptRc4 rc44;
-            rc44.SetKey((unsigned char *)pwdbuf,stringlen);
-            rc44.Encrypt((unsigned char *)rawdata.data(),(unsigned char *)data.data(),rawdata.size());
-            //dumpthisdata((const char *)data.data(),data.size());
+        if(passwordstr.size() > 0) {
+            QEncryptRc4 rc;
+            //debuginfo(("try to use password:%s",passwordstr.toAscii().data()));
+            rc.UseKey(passwordstr);
+            rc.Encrypt(rawdata,data);
         } else {
             goto encrypting_again;
         }
@@ -582,7 +587,6 @@ void QRelayDeviceControl::DeviceUpdate(void)
     hostaddrid = ":" + hostaddrid;
     hostaddrid = this->deviceaddr.toString() + hostaddrid;
     //debuginfo(("set device info:%s",hostaddrid.toAscii().data()));
-
     emit DeviceInfoChanged(hostaddrid);
 }
 
@@ -621,6 +625,8 @@ void QRelayDeviceControl::SetDeviceInfo(QByteArray & data)
 
      bdevcie_info_is_useful = true;
 
+     ack_status = tr("devcie infomation is updated1");
+     emit DeviceAckStatus(ack_status);
    // debuginfo(("%s",str.toAscii().data()));
 }
 

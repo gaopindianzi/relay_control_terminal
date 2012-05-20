@@ -23,6 +23,7 @@ public:
 protected slots:
     void	itemClicked ( QListWidgetItem * item );
     void ListCurrentItemChanged ( QListWidgetItem * current, QListWidgetItem * previous );
+    void DeviceAckStatus(QString ackstr);
 protected slots:
     void RemoveClicked(bool);
     void ReadClicked(bool);

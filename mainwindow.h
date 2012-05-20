@@ -48,6 +48,7 @@ private slots:
     void EditDeviceIpconfig(void);
     void ClearDeviceTable(void);
     void PasswordConfig(void);
+    void DevcieAckStstus(QString ackstr);
 signals:
     void DeviceUpdata(QSharedPointer<QRelayDeviceControl> & pdev);
 private:

@@ -5,6 +5,8 @@
 #include <QMessageBox>
 #include "QDeviceList.h"
 #include "multimgr_device_dev.h"
+#include <QStatusBar>
+
 
 #include "debug.h"
 #define THISINFO               0
@@ -21,6 +23,7 @@ EditParamDialog::EditParamDialog(QWidget *parent) :
     connect(ui->pushButtonReadDeviceInfo,SIGNAL(clicked(bool)),this,SLOT(ReadClicked(bool)));
     connect(ui->pushButtonWrite,SIGNAL(clicked(bool)),this,SLOT(WriteClicked(bool)));
     connect(ui->pushButtonResetDevice,SIGNAL(clicked(bool)),this,SLOT(ResetClicked(bool)));
+
 }
 
 EditParamDialog::~EditParamDialog()
@@ -38,6 +41,10 @@ void EditParamDialog::CreateDeviceList(void)
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(list_devices);
     ui->groupBoxDeviceList->setLayout(layout);
+    ui->labelStatusBar->setText(tr("status:"));
+
+    ui->lineEditPassword->setEchoMode(QLineEdit::Password);
+    ui->lineEditPasswordAgain->setEchoMode(QLineEdit::Password);
 }
 void EditParamDialog::InsertDevice(RelayDeviceSharePonterType & pdev)
 {
@@ -46,6 +53,7 @@ void EditParamDialog::InsertDevice(RelayDeviceSharePonterType & pdev)
     item->setText(pdev->GetHostAddressString());
     this->list_devices->insertItem(row,item);
     this->list_devices->setCurrentItem(item);
+    connect(pdev.data(),SIGNAL(DeviceAckStatus(QString)),this,SLOT(DeviceAckStatus(QString)));
     itemClicked(item);
 }
 void	EditParamDialog::itemClicked ( QListWidgetItem * item )
@@ -64,6 +72,10 @@ void	EditParamDialog::itemClicked ( QListWidgetItem * item )
 void EditParamDialog::ListCurrentItemChanged ( QListWidgetItem * current, QListWidgetItem * previous )
 {
     debuginfo(("item changed..."));
+}
+void EditParamDialog::DeviceAckStatus(QString ackstr)
+{
+    ui->labelStatusBar->setText(tr("Status:") + ackstr);
 }
 
 void EditParamDialog::RemoveClicked(bool)
@@ -148,6 +160,8 @@ void EditParamDialog::WriteClicked(bool)
             debuginfo(("BroadcastPeriod  = %d",BroadcastPeriod));
         }
         if(ui->checkBoxChnagePassword->isChecked()) {
+            debuginfo(("Change password."));
+            edit_info.change_password = 1;
             if(ui->lineEditPassword->text().isEmpty()) {
                 memset(edit_info.password,0,sizeof(edit_info.password));
                 edit_info.cncryption_mode = 0;
@@ -155,6 +169,9 @@ void EditParamDialog::WriteClicked(bool)
                 QString pwd = ui->lineEditPassword->text();
                 pwd.resize(sizeof(edit_info.password));
                 memcpy(edit_info.password,pwd.toAscii().data(),sizeof(edit_info.password));
+                unsigned int len = strlen(edit_info.password);
+                len = (len > sizeof(edit_info.password))?sizeof(edit_info.password):len;
+                edit_info.password[len] = 0;
                 edit_info.cncryption_mode = 1;
             }
         } else {

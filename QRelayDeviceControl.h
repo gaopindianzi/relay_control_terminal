@@ -22,6 +22,7 @@ public:
     QRelayDeviceControl(QObject * parent);
 signals:
     void DeviceInfoChanged(QString hostaddrID);
+    void DeviceAckStatus(QString status);
 public slots:
     void InitDeviceAddress(QHostAddress & addr,quint16 port,QSharedPointer<QUdpSocket>  & psocket);
     int   SendRxData(QByteArray & data,QList<password_item> & pwdlist);
@@ -47,6 +48,7 @@ public:
     QString GetGroup2Name(void);
     void      SetGroup2Name(QString name);
     QString GetStatus(void);
+    QString GetAckStatus(void);
     int        GetIoOutNum(void);
     QString GetDeviceModelName(void);
     void      ReadIoOut(void);
@@ -78,6 +80,7 @@ private:
     QString  password;
     //QEncryptRc4    rc4;
     QTimer * timer;
+    QString   ack_status;
 public:
     bool       is_checked;
     bool       is_online;
