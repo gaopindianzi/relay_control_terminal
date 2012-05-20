@@ -86,6 +86,9 @@ void QEncryptRc4::UseKey(QString key)
 {
     const char * val = key.toAscii().constData();
     int len = strlen(val);
+    if(key.isEmpty()) {
+        return ;
+    }
     for(int i=0;i<sbox_len;i++) {
         this->kbox[i] = val[i % len];
     }

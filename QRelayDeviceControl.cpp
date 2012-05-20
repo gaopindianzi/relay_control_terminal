@@ -32,8 +32,9 @@ QRelayDeviceControl::QRelayDeviceControl(QObject * parent) :
 {
     pdev_info = QSharedPointer<device_info_st>(new device_info_st);
     timer = new QTimer(this);
-         connect(timer, SIGNAL(timeout()), this, SLOT(TimeoutUpdataInfo()));
-         timer->start(1000);
+    connect(timer, SIGNAL(timeout()), this, SLOT(TimeoutUpdataInfo()));
+
+    timer->start(1000);
     is_checked = true;
     online_timeout = 0;
     is_online = false;
@@ -59,7 +60,6 @@ void QRelayDeviceControl::TimeoutUpdataInfo(void)
         is_online = false;
         DeviceUpdate();
     }
-    timer->setInterval(1000);
 }
 
 
@@ -227,6 +227,7 @@ void QRelayDeviceControl::GetDevcieInfoFormDevcie(void)
 
 void QRelayDeviceControl::ConvertIoOutOneBitAndSendCmd(int bit)
 {
+   // return ;
     QByteArray sb;
     unsigned int buflen = sizeof(modbus_command_st) + sizeof(modbus_tcp_head) + sizeof(modbus_type_fc5_cmd) - 2;
     sb.resize(buflen);
@@ -449,7 +450,7 @@ QString QRelayDeviceControl::GetDeviceModelName(void)
 void QRelayDeviceControl::SendCommandData(const char * buffer,int len)
 {
     //debuginfo(("send command data to %s:%d",this->deviceaddr.toString().toAscii().data(),this->deviceport));
-    if(need_encryption) {
+    if(need_encryption && !password.isEmpty()) {
         QEncryptRc4 rcc;
         rcc.UseKey(password);
         QByteArray src,buf;
