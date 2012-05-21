@@ -26,12 +26,11 @@ void	QDeviceCheckBox::mousePressEvent ( QMouseEvent * event )
     //debuginfo(("mouse precess...%s",this->isChecked()?"true":"fasle"));
 }
 
-
-
-
-
-
-
+void QDeviceCheckBox::paintEvent ( QPaintEvent * event )
+{
+    this->setChecked(pdevice->is_checked);
+    QCheckBox::paintEvent(event);
+}
 
 QCheckBoxDelegate::QCheckBoxDelegate(QObject *parent)
     : CDeviceDelegate(parent)

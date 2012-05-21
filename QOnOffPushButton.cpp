@@ -21,11 +21,13 @@ QSetOnPushButton::QSetOnPushButton(RelayDeviceSharePonterType pdev,QWidget * par
 
 void QSetOnPushButton::mousePressEvent ( QMouseEvent * event )
 {
-    QBitArray bitmsk;
-    bitmsk.resize(pdevice->GetIoOutNum());
-    bitmsk.fill(true,pdevice->GetIoOutNum());
-    pdevice->MultiIoOutSet(0,bitmsk);
-    this->update();
+    if(event->button()&Qt::LeftButton) {
+        QBitArray bitmsk;
+        bitmsk.resize(pdevice->GetIoOutNum());
+        bitmsk.fill(true,pdevice->GetIoOutNum());
+        pdevice->MultiIoOutSet(0,bitmsk);
+        this->update();
+    }
 }
 
 
@@ -37,12 +39,14 @@ QSetOFFPushButton::QSetOFFPushButton(RelayDeviceSharePonterType pdev,QWidget * p
 
 void QSetOFFPushButton::mousePressEvent ( QMouseEvent * event )
 {
-    debuginfo(("mouse precess event."));
-    QBitArray bitmsk;
-    bitmsk.resize(pdevice->GetIoOutNum());
-    bitmsk.fill(false,pdevice->GetIoOutNum());
-    pdevice->MultiIoOutSet(0,bitmsk);
-    this->update();
+    if(event->button()&Qt::LeftButton) {
+        debuginfo(("mouse precess event."));
+        QBitArray bitmsk;
+        bitmsk.resize(pdevice->GetIoOutNum());
+        bitmsk.fill(false,pdevice->GetIoOutNum());
+        pdevice->MultiIoOutSet(0,bitmsk);
+        this->update();
+    }
 }
 
 
@@ -169,14 +173,14 @@ int QRelayValueSingalChannalButton::mouseAtButtonPosition(int x)
 
 void QRelayValueSingalChannalButton::mousePressEvent ( QMouseEvent * event )
 {
-    int pos = event->x();
-    int x = mouseAtButtonPosition(pos);
-    if(x >= 0 && x < 32) relay_bitmap ^= (1<<x);
-    debuginfo(("mouse at position %d/%d=%drelay=0x%02X",pos,this->width(),x,relay_bitmap));
-    //发送指令，翻转这个位
-    pdevice->ConvertIoOutOneBitAndSendCmd(x);
-    //pdevice->relay_bitmask[x] = !pdevice->relay_bitmask[x];
-    this->update();
+    if(event->button()&Qt::LeftButton) {
+        int pos = event->x();
+        int x = mouseAtButtonPosition(pos);
+        if(x >= 0 && x < 32) relay_bitmap ^= (1<<x);
+        //发送指令，翻转这个位
+        pdevice->ConvertIoOutOneBitAndSendCmd(x);
+        this->update();
+    }
 }
 
 

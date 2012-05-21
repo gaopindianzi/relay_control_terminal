@@ -6,7 +6,7 @@
 #include "rc4.h"
 
 #include "debug.h"
-#define THISINFO              0
+#define THISINFO             1
 #define THISERROR           1
 #define THISASSERT         1
 
@@ -615,6 +615,11 @@ void QRelayDeviceControl::DeviceUpdate(void)
     hostaddrid = this->deviceaddr.toString() + hostaddrid;
     //debuginfo(("set device info:%s",hostaddrid.toAscii().data()));
 	emit DeviceInfoChanged(hostaddrid);
+}
+void QRelayDeviceControl::Updata(void)
+{
+    debuginfo(("updata"));
+    DeviceUpdate();
 }
 
 void QRelayDeviceControl::SetDeviceInfo(QByteArray & data)

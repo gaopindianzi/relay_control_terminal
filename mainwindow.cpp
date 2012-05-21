@@ -11,12 +11,64 @@
 #include "editparamdialog.h"
 #include "qeditipconfigdialog.h"
 #include "qpasswordmangerdialog.h"
+#include "qioexpendsettingdialog.h"
 
 #include "debug.h"
 
-#define THISINFO            0
+#define THISINFO            1
 #define THISERROR           1
 #define THISASSERT          1
+
+
+
+
+
+QDeviceControlWidget::QDeviceControlWidget(QWidget * parent)
+    : QTableWidget(parent)
+{
+    this->setIoExternSetAction = new QAction(tr("&IoExpendSetting..."), this);
+    connect(setIoExternSetAction, SIGNAL(triggered()), this, SLOT(IoSettingDialog()));
+}
+
+void QDeviceControlWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+#if 0  //尚未实现
+    debuginfo(("at context event."));
+    const QPoint & pos = event->pos();
+    QTableWidgetItem * item = this->itemAt(pos);
+    if(item) {
+        QVariant var = item->data(0);
+       RelayDeviceSharePonterType pdev = qVariantValue<RelayDeviceSharePonterType>(var);
+        if(pdev) {
+            debuginfo(("item is exist: item type:(%d,%d)%s",item->row(),item->column(),pdev->GetDeviceName().toAscii().data()));
+            QMenu menu(this);
+            setIoExternSetAction->setData(var);
+            menu.addAction(setIoExternSetAction);
+            menu.exec(event->globalPos());
+        } else {
+            debuginfo(("pdev is not valid!"));
+        }
+    } else {
+        debuginfo(("item is not exist: item type"));
+    }
+#endif
+}
+
+void  QDeviceControlWidget::IoSettingDialog(void)
+{
+    QAction * act = (QAction *)sender();
+    QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(act->data());
+    //debuginfo((" this io devcie is = %s",pdev->GetDeviceName().toAscii().data()));
+    QIoExpendSettingDialog dlg;
+    dlg.setWindowTitle(pdev->GetDeviceName());
+    dlg.exec();
+}
+
+void  QDeviceControlWidget::RemoveOneItemActioN(void)
+{
+}
+
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -30,17 +82,13 @@ MainWindow::MainWindow(QWidget *parent) :
     CreateDevcieTable();
     CreateAction();
     CreateMenu();
+    createContextMenu();
 
     QGridLayout *mainLayout = new QGridLayout;
         mainLayout->addWidget(deviceGroupBox, 0, 0, 1, 2);
         centralWidget->setLayout(mainLayout);
         this->resize(1000,300);
         setWindowTitle(tr("RemoteMultiDeviceManger"));
-
-        //
-        ///manualAddDevice(0);
-       // manualAddDevice(1);
-       // manualAddDevice(2);
 
         statusBar()->showMessage(tr("Ready"));
 
@@ -60,34 +108,65 @@ void MainWindow::DevcieAckStstus(QString ackstr)
 void MainWindow::CreateAction(void)
 {
     this->quitact = new QAction(tr("&Quit"), this);
-    //addImagesAct->setShortcut(tr("Ctrl+A"));
     connect(quitact, SIGNAL(triggered()), this, SLOT(Quit()));
     //
-    this->edit_device_param_act = new QAction(tr("&EditDevice..."), this);
+    this->edit_device_param_act = new QAction(tr("&Edit device parameter..."), this);
     connect(edit_device_param_act, SIGNAL(triggered()), this, SLOT(EditDeviceParam()));
 
-    this->cleardevicetable = new QAction(tr("&Clear"), this);
+    this->cleardevicetable = new QAction(tr("&Clear all device"), this);
     connect(cleardevicetable, SIGNAL(triggered()), this, SLOT(ClearDeviceTable()));
 
-    this->edit_device_ipconfig = new QAction(tr("&Ipconfig..."), this);
+    this->edit_device_ipconfig = new QAction(tr("&Change deivce ip config..."), this);
     connect(edit_device_ipconfig, SIGNAL(triggered()), this, SLOT(EditDeviceIpconfig()));
 
-    password_manger = new QAction(tr("&Password..."),this);
+    password_manger = new QAction(tr("&Communication password..."),this);
     connect(password_manger,SIGNAL(triggered()),this,SLOT(PasswordConfig()));
+
+    secect_all = new QAction(tr("&Selected all device"),this);
+    connect(secect_all,SIGNAL(triggered()),this,SLOT(SelectAll()));
+    desecect_all = new QAction(tr("&Deselected all device"),this);
+    connect(desecect_all,SIGNAL(triggered()),this,SLOT(DesecectAll()));
+
+    open_all_device = new QAction(tr("&Set all selected device output ON"),this);
+    connect(open_all_device,SIGNAL(triggered()),this,SLOT(OpenAllListDeviceIoOutput()));
+    close_all_device = new QAction(tr("&Set all selected device output OFF"),this);
+    connect(close_all_device,SIGNAL(triggered()),this,SLOT(CloseAllListDeviceIoOutput()));
+
+
+    //系统后台图标
+    sysicon = new QIcon(":/sys/sys_icon");
+    trayIconMenu = new QMenu(this);
+    trayIconMenu->addSeparator();
+    trayIconMenu->addAction(quitact);
+
+    trayIcon = new QSystemTrayIcon(*sysicon,this);
+    trayIcon->setContextMenu(trayIconMenu);
+
+    setWindowIcon(*sysicon);
+    trayIcon->setIcon(*sysicon);
+    trayIcon->setVisible(true);
+    trayIcon->setToolTip(this->windowTitle());
+    trayIcon->show();
 }
 
 void MainWindow::CreateMenu(void)
 {
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(quitact);
-
-
     toolsMenu = menuBar()->addMenu(tr("&Tools"));
     toolsMenu->addAction(edit_device_param_act);
     toolsMenu->addAction(edit_device_ipconfig);
     toolsMenu->addAction(password_manger);
     toolsMenu->addSeparator();
     toolsMenu->addAction(cleardevicetable);
+    toolsMenu = menuBar()->addMenu(tr("&Operation"));
+    toolsMenu->addAction(secect_all);
+    toolsMenu->addAction(desecect_all);
+    toolsMenu->addAction(open_all_device);
+    toolsMenu->addAction(close_all_device);
+
+
+
 
 #if      0 //for debug
     password_item itm;
@@ -96,9 +175,15 @@ void MainWindow::CreateMenu(void)
     password_list.push_back(itm);
 #endif
      //QList<password_item>   password_list;
-
-
 }
+
+void MainWindow::createContextMenu(void)
+{
+    deviceTable->setContextMenuPolicy(Qt::DefaultContextMenu); //Qt::ActionsContextMenu);
+    deviceTable->addAction(password_manger);
+    deviceTable->addAction(cleardevicetable);
+}
+
 void MainWindow::Quit(void)
 {
     close();
@@ -161,12 +246,65 @@ void MainWindow::ClearDeviceTable(void)
     mydevicemap.clear();
     mydevicemap.empty();
 }
+void MainWindow::SelectAll(void)
+{
+    int rowcount = deviceTable->rowCount();
+    for(int i=0;i<rowcount;i++) {
+        QTableWidgetItem * item = deviceTable->item(i,0);
+        QVariant var = item->data(0);
+        QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(var);
+        pdev->is_checked = true;
+        pdev->Updata();
+    }
+}
+void MainWindow::DesecectAll(void)
+{
+    int rowcount = deviceTable->rowCount();
+    for(int i=0;i<rowcount;i++) {
+        QTableWidgetItem * item = deviceTable->item(i,0);
+        QVariant var = item->data(0);
+        QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(var);
+        pdev->is_checked = false;
+        pdev->Updata();
+    }
+}
+void MainWindow::OpenAllListDeviceIoOutput(void)
+{
+    int rowcount = deviceTable->rowCount();
+    for(int i=0;i<rowcount;i++) {
+        QTableWidgetItem * item = deviceTable->item(i,0);
+        QVariant var = item->data(0);
+        QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(var);
+        if(pdev->is_checked) {
+            QBitArray bitmsk;
+            bitmsk.resize(pdev->GetIoOutNum());
+            bitmsk.fill(true,pdev->GetIoOutNum());
+            pdev->MultiIoOutSet(0,bitmsk);
+        }
+    }
+}
+
+void MainWindow::CloseAllListDeviceIoOutput(void)
+{
+    int rowcount = deviceTable->rowCount();
+    for(int i=0;i<rowcount;i++) {
+        QTableWidgetItem * item = deviceTable->item(i,0);
+        QVariant var = item->data(0);
+        QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(var);
+        if(pdev->is_checked) {
+            QBitArray bitmsk;
+            bitmsk.resize(pdev->GetIoOutNum());
+            bitmsk.fill(false,pdev->GetIoOutNum());
+            pdev->MultiIoOutSet(0,bitmsk);
+        }
+    }
+}
 
 void MainWindow::CreateDevcieTable(void)
 {
     unsigned int index = 0;
         deviceGroupBox = new QGroupBox(tr("DeviceTable"));
-        deviceTable = new QTableWidget;
+        deviceTable = new QDeviceControlWidget;
         deviceTable->setSelectionMode(QAbstractItemView::NoSelection);
         deviceTable->setItemDelegateForColumn(index++,new QCheckBoxDelegate(this));
         deviceTable->setItemDelegateForColumn(index++,new QDeviceNameDelegate(this));
@@ -307,7 +445,7 @@ void MainWindow::processTheDeviceData(QByteArray & data,
         (*i)->SendRxData(data,this->password_list);
         //DeviceInfoChanged(str);
     } else {
-        debuginfo(("Not found device, try to insert one device"));
+        //debuginfo(("Not found device, try to insert one device"));
         QSharedPointer<QRelayDeviceControl> pdev(new QRelayDeviceControl(this));
         pdev->InitDeviceAddress(sender,senderport,pUdpSocket);
         pdev->SendRxData(data,this->password_list);

@@ -26,6 +26,8 @@ signals:
 public slots:
     void InitDeviceAddress(QHostAddress & addr,quint16 port,QSharedPointer<QUdpSocket>  & psocket);
     int   SendRxData(QByteArray & data,QList<password_item> & pwdlist);
+    void Updata(void);
+    void DeviceUpdate(void);
 private slots:
     void TimeoutUpdataInfo(void);
 public:
@@ -62,7 +64,6 @@ public:
     QSharedPointer<device_info_st> & GetDeviceInfo(void) { return pdev_info; }
 private:
     void      SendCommandData(const char * buffer,int len);
-    void      DeviceUpdate(void);
 private:
     QString devicename;
     QString devicegroup1;

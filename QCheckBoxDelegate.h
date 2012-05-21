@@ -18,6 +18,7 @@ public:
     QDeviceCheckBox (RelayDeviceSharePonterType & pdev, QWidget * parent = 0 );
 protected:
     void	mousePressEvent ( QMouseEvent * event );
+    void paintEvent ( QPaintEvent * event );
 private:
     RelayDeviceSharePonterType pdevice;
     //void paintEvent ( QPaintEvent * event );

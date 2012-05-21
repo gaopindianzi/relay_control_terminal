@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/sys/sys_icon">
+        <file>remote_main.ico</file>
+    </qresource>
+</RCC>
