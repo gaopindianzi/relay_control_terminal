@@ -149,9 +149,10 @@ void MainWindow::CreateAction(void)
     trayIconMenu = new QMenu(this);
     //trayIconMenu->addAction(minimizeAction);
     //trayIconMenu->addAction(maximizeAction);
-    trayIconMenu->addAction(restoreAction);
+
     //trayIconMenu->addSeparator();
     trayIconMenu->addAction(quitact);
+    trayIconMenu->addAction(restoreAction);
 
     trayIcon = new QSystemTrayIcon(sysicon,this);
     trayIcon->setContextMenu(trayIconMenu);
