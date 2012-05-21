@@ -55,10 +55,17 @@ private:
     void createContextMenu(void);
     void manualAddDevice(int index);
     void InsertDevice(QSharedPointer<QRelayDeviceControl> & pdev);    
+protected: //Ðéº¯Êý
+    void setVisible(bool visible);
+    void changeEvent(QEvent * event );
+    void hideEvent ( QHideEvent * event );
+    void showEvent ( QShowEvent * event );
+    void closeEvent(QCloseEvent *event);
 public:
     void InitUdpSocket(void);
     void processTheDeviceData(QByteArray & data,QHostAddress & sender,quint16 senderport);
 private slots:
+    void showMinimized(void);
     void UdpreadPendingDatagrams();
     void DeviceInfoChanged(QString hostaddrID);
     void Quit(void);
@@ -97,7 +104,11 @@ private:
 private:
     Ui::MainWindow *ui;
 
-    QIcon             *         sysicon;
+    QAction *minimizeAction;
+    QAction *maximizeAction;
+    QAction *restoreAction;
+    QIcon                       sysicon;
+
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
 };

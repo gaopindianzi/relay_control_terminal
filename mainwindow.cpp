@@ -12,10 +12,11 @@
 #include "qeditipconfigdialog.h"
 #include "qpasswordmangerdialog.h"
 #include "qioexpendsettingdialog.h"
+ #include <QCoreApplication>
 
 #include "debug.h"
 
-#define THISINFO            1
+#define THISINFO            0
 #define THISERROR           1
 #define THISASSERT          1
 
@@ -88,7 +89,7 @@ MainWindow::MainWindow(QWidget *parent) :
         mainLayout->addWidget(deviceGroupBox, 0, 0, 1, 2);
         centralWidget->setLayout(mainLayout);
         this->resize(1000,300);
-        setWindowTitle(tr("RemoteMultiDeviceManger"));
+        setWindowTitle(tr("Remote multiple device manger"));
 
         statusBar()->showMessage(tr("Ready"));
 
@@ -134,19 +135,87 @@ void MainWindow::CreateAction(void)
 
 
     //系统后台图标
-    sysicon = new QIcon(":/sys/sys_icon");
+    minimizeAction = new QAction(tr("Mi&nimize"), this);
+    connect(minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
+
+    maximizeAction = new QAction(tr("Ma&ximize"), this);
+    connect(maximizeAction, SIGNAL(triggered()), this, SLOT(showMaximized()));
+
+    restoreAction = new QAction(tr("&Restore"), this);
+    connect(restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
+
+
+    sysicon.addFile(":/sys/sys_icon/remote_main.ico");
     trayIconMenu = new QMenu(this);
-    trayIconMenu->addSeparator();
+    //trayIconMenu->addAction(minimizeAction);
+    //trayIconMenu->addAction(maximizeAction);
+    trayIconMenu->addAction(restoreAction);
+    //trayIconMenu->addSeparator();
     trayIconMenu->addAction(quitact);
 
-    trayIcon = new QSystemTrayIcon(*sysicon,this);
+    trayIcon = new QSystemTrayIcon(sysicon,this);
     trayIcon->setContextMenu(trayIconMenu);
 
-    setWindowIcon(*sysicon);
-    trayIcon->setIcon(*sysicon);
+    setWindowIcon(sysicon);
+    trayIcon->setIcon(sysicon);
     trayIcon->setVisible(true);
     trayIcon->setToolTip(this->windowTitle());
     trayIcon->show();
+
+}
+void MainWindow::showMinimized(void)
+{
+    debuginfo(("shwo minized..."));
+}
+#if 0
+typedef   struct   tagMSG   {
+        HWND       hwnd;
+        UINT       message;
+        WPARAM   wParam;
+        LPARAM   lParam;
+        DWORD     time;
+        POINT     pt;
+}   MSG;
+#endif
+
+void MainWindow::changeEvent(QEvent * event )
+{
+     if(windowState() & Qt::WindowMinimized)
+     {
+         debuginfo(("change event."));
+         //setWindowState(windowState() & ~Qt::WindowMinimized);
+         //hide();
+      //此处无论event->accept()或者event->ignore()都不好使。
+     }
+}
+
+void MainWindow::showEvent ( QShowEvent * event )
+{
+    debuginfo(("show event ."));
+    setVisible(true);
+}
+
+void MainWindow::hideEvent ( QHideEvent * event )
+{
+    debuginfo(("hide event"));
+}
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (trayIcon->isVisible()) {
+        QSystemTrayIcon::MessageIcon icon = QSystemTrayIcon::Information;
+        trayIcon->showMessage(tr("Note!"),tr("The program will keep running."), icon, 0);
+        hide();
+        event->ignore();
+    }
+}
+
+void MainWindow::setVisible(bool visible)
+{
+     debuginfo(("set visible..."));
+    minimizeAction->setEnabled(visible);
+    maximizeAction->setEnabled(!isMaximized());
+    restoreAction->setEnabled(isMaximized() || !visible);
+    QMainWindow::setVisible(visible);
 }
 
 void MainWindow::CreateMenu(void)
@@ -186,6 +255,7 @@ void MainWindow::createContextMenu(void)
 
 void MainWindow::Quit(void)
 {
+    trayIcon->setVisible(false);
     close();
 }
 
