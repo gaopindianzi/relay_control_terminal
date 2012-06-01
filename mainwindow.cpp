@@ -168,16 +168,6 @@ void MainWindow::showMinimized(void)
 {
     debuginfo(("shwo minized..."));
 }
-#if 0
-typedef   struct   tagMSG   {
-        HWND       hwnd;
-        UINT       message;
-        WPARAM   wParam;
-        LPARAM   lParam;
-        DWORD     time;
-        POINT     pt;
-}   MSG;
-#endif
 
 void MainWindow::changeEvent(QEvent * event )
 {
@@ -238,7 +228,7 @@ void MainWindow::CreateMenu(void)
 
 
 
-#if      0 //for debug
+#if     1 //for debug
     password_item itm;
     itm.alias = "admin";
     itm.pwd = "admin";

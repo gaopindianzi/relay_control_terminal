@@ -2,6 +2,7 @@
 #define QIOEXPENDSETTINGDIALOG_H
 
 #include <QDialog>
+#include "QRelayDeviceControl.h"
 
 namespace Ui {
 class QIoExpendSettingDialog;
