@@ -125,9 +125,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
         //初始化UDP接口
         InitUdpSocket();
-
-    retranslateUI();
-
 }
 
 MainWindow::~MainWindow()
@@ -166,6 +163,8 @@ void MainWindow::CreateAction(void)
     close_all_device = new QAction(tr("&Set all selected device output OFF"),this);
     connect(close_all_device,SIGNAL(triggered()),this,SLOT(CloseAllListDeviceIoOutput()));
 
+    selectChineseLanguage = new QAction(tr("Chinese"),this);
+    connect(selectChineseLanguage,SIGNAL(triggered()),this,SLOT(SelectChineseLanguageAction()));
 
     //系统后台图标
     minimizeAction = new QAction(tr("Mi&nimize"), this);
@@ -252,6 +251,10 @@ void MainWindow::CreateMenu(void)
     toolsMenu->addAction(password_manger);
     toolsMenu->addSeparator();
     toolsMenu->addAction(cleardevicetable);
+#if 0
+    toolsMenu->addSeparator();
+    toolsMenu->addAction(selectChineseLanguage);
+#endif
     toolsMenu = menuBar()->addMenu(tr("&Operation"));
     toolsMenu->addAction(secect_all);
     toolsMenu->addAction(desecect_all);
@@ -582,5 +585,13 @@ void MainWindow::DeviceInfoChanged(QString  hostaddrID)
 
 void MainWindow::retranslateUI(void)
 {
-    deviceGroupBox->setTitle(tr("设备列表"));
+    deviceGroupBox->setTitle(tr("DeviceTable"));
+    quitact->setText(tr("Exit"));
+    edit_device_param_act->setText(tr("Edit Device Parameter..."));
+    edit_device_ipconfig->setText(tr("Edit Ip Config..."));
+}
+
+void MainWindow::SelectChineseLanguage(void)
+{
+    retranslateUI();
 }
