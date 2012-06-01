@@ -71,6 +71,36 @@ void  QDeviceControlWidget::RemoveOneItemActioN(void)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -95,6 +125,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
         //初始化UDP接口
         InitUdpSocket();
+
+    retranslateUI();
+
 }
 
 MainWindow::~MainWindow()
@@ -544,4 +577,10 @@ void MainWindow::DeviceInfoChanged(QString  hostaddrID)
             }
         }
     }
+}
+
+
+void MainWindow::retranslateUI(void)
+{
+    deviceGroupBox->setTitle(tr("设备列表"));
 }

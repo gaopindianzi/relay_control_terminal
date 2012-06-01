@@ -55,6 +55,7 @@ private:
     void createContextMenu(void);
     void manualAddDevice(int index);
     void InsertDevice(QSharedPointer<QRelayDeviceControl> & pdev);    
+    void retranslateUI(void);
 protected: //Ðéº¯Êý
     void setVisible(bool visible);
     void changeEvent(QEvent * event );
