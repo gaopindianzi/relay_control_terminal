@@ -28,6 +28,10 @@ void dumpthisdata(const char * buffer,int len)
 }
 
 
+
+int QRelayDeviceControl::count = 0;
+
+
 QRelayDeviceControl::QRelayDeviceControl(QObject * parent) :
     QObject(parent),
     bdevcie_info_is_useful(false),
@@ -44,6 +48,8 @@ QRelayDeviceControl::QRelayDeviceControl(QObject * parent) :
     need_encryption = false;
 
     ack_status = tr("none.");
+    index = count;
+    count++;
     //rc4.SetKey((unsigned char *)"admin",strlen("admin"));
 }
 

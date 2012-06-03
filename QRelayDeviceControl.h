@@ -82,6 +82,9 @@ private:
     //QEncryptRc4    rc4;
     QTimer * timer;
     QString   ack_status;
+private:
+    static   int count;
+    int              index;
 public:
     bool       is_checked;
     bool       is_online;

@@ -255,6 +255,9 @@
       <height>16</height>
      </rect>
     </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
     <property name="text">
      <string>Device Listion Port:</string>
     </property>
@@ -342,9 +345,9 @@
     <property name="geometry">
      <rect>
       <x>240</x>
-      <y>170</y>
+      <y>165</y>
       <width>46</width>
-      <height>10</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">

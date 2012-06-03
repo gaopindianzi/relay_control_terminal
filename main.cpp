@@ -8,8 +8,12 @@
 #include <QString>
 #include <QWidget>
 #include <QObject>
+#include <QTranslator>
 #include "mainwindow.h"
 
+
+QTranslator appTranslator;
+QTranslator qtTranslator;
 
 int main(int argc, char *argv[])
 {
@@ -36,6 +40,10 @@ int main(int argc, char *argv[])
                                           "on this system."));
         return 1;
     }
+
+    appTranslator.load(":/language/remotectlmultemgr_zh.qm");
+    a.installTranslator(&appTranslator);
+
 
 
     QTextCodec::setCodecForTr(QTextCodec::codecForLocale());

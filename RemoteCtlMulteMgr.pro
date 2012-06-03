@@ -56,7 +56,8 @@ FORMS    += mainwindow.ui \
 RC_FILE = myapp.rc
 
 OTHER_FILES += \
-    myapp.rc
+    myapp.rc \
+    remotectlmultemgr_zh.qm
 
 RESOURCES += \
     resource_files.qrc

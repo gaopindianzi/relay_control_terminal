@@ -14,6 +14,7 @@
 #include <QAction>
 #include <QMenu>
 #include <QSystemTrayIcon>
+#include <QTranslator>
 #include "PasswordItemDef.h"
 
 #define    APP_DISPLAY_TIME             1

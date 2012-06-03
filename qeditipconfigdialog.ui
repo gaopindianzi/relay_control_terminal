@@ -53,53 +53,68 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>20</x>
       <y>25</y>
-      <width>46</width>
+      <width>51</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
      <string>IpAddr:</string>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
    </widget>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>25</x>
-      <y>50</y>
-      <width>54</width>
-      <height>12</height>
+      <x>5</x>
+      <y>51</y>
+      <width>66</width>
+      <height>16</height>
      </rect>
     </property>
     <property name="text">
      <string>Netmask:</string>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
    </widget>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>25</x>
+      <x>15</x>
       <y>80</y>
-      <width>54</width>
-      <height>12</height>
+      <width>56</width>
+      <height>16</height>
      </rect>
     </property>
     <property name="text">
      <string>GateWay:</string>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
    </widget>
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>45</x>
+      <x>20</x>
       <y>110</y>
-      <width>26</width>
+      <width>51</width>
       <height>16</height>
      </rect>
     </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
     <property name="text">
-     <string>DNS:    </string>
+     <string>DNS:</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QLineEdit" name="lineEditCurrIpAddr">
@@ -198,14 +213,17 @@
    <widget class="QLabel" name="label_8">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>20</x>
       <y>110</y>
-      <width>26</width>
+      <width>51</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>DNS:    </string>
+     <string>DNS:</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="label_5">
@@ -214,24 +232,30 @@
       <x>20</x>
       <y>80</y>
       <width>54</width>
-      <height>12</height>
+      <height>16</height>
      </rect>
     </property>
     <property name="text">
      <string>GateWay:</string>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
    </widget>
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>8</x>
       <y>50</y>
-      <width>54</width>
-      <height>12</height>
+      <width>66</width>
+      <height>16</height>
      </rect>
     </property>
     <property name="text">
      <string>Netmask:</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="label_7">
@@ -239,12 +263,15 @@
      <rect>
       <x>25</x>
       <y>20</y>
-      <width>46</width>
+      <width>51</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
      <string>IpAddr:</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
   </widget>
