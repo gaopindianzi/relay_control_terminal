@@ -75,6 +75,7 @@ void EditParamDialog::ListCurrentItemChanged ( QListWidgetItem * current, QListW
 }
 void EditParamDialog::DeviceAckStatus(QString ackstr)
 {
+    debuginfo(("edit param > DeviceAckStatus..."));
     ui->labelStatusBar->setText(tr("Status:") + ackstr);
 }
 

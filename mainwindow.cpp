@@ -265,7 +265,7 @@ void MainWindow::CreateMenu(void)
 
 
 
-#if     1 //for debug
+#if     0 //for debug
     password_item itm;
     itm.alias = "admin";
     itm.pwd = "admin";
@@ -427,14 +427,14 @@ void MainWindow::CreateDevcieTable(void)
         deviceTable->horizontalHeader()->setDefaultSectionSize(100);
         deviceTable->setColumnCount(labels.size());
         deviceTable->setHorizontalHeaderLabels(labels);
-        deviceTable->horizontalHeader()->setResizeMode(0, QHeaderView::Fixed);
+        //deviceTable->horizontalHeader()->setResizeMode(0, QHeaderView::Fixed);
         index = 0;
         deviceTable->horizontalHeader()->resizeSection(index++,50);
         deviceTable->horizontalHeader()->resizeSection(index++,120);
         deviceTable->horizontalHeader()->resizeSection(index++,100);
         deviceTable->horizontalHeader()->resizeSection(index++,80);
         deviceTable->horizontalHeader()->resizeSection(index++,80);
-        deviceTable->horizontalHeader()->resizeSection(index++,250);
+        deviceTable->horizontalHeader()->resizeSection(index++,300);
         deviceTable->horizontalHeader()->resizeSection(index++,60);
         deviceTable->horizontalHeader()->resizeSection(index++,60);
         deviceTable->horizontalHeader()->resizeSection(index++,50);
@@ -550,6 +550,7 @@ void MainWindow::processTheDeviceData(QByteArray & data,
         if(pdev->devcie_info_is_useful()) {
             mydevicemap.insert(str,pdev);
             InsertDevice(pdev);
+            pdev->index = mydevicemap.size();
         }
     }
     //如果没有找到，则创建一个，然后再转发消息给他处理
