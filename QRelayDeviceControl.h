@@ -84,10 +84,10 @@ private:
     QString   ack_status;
 private:
     static   int count;
-    int              index;
 public:
     bool       is_checked;
     bool       is_online;
+    int              index;
 };
 
 typedef QSharedPointer<QRelayDeviceControl>   RelayDeviceSharePonterType;

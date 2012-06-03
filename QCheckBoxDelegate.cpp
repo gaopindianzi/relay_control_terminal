@@ -1,6 +1,6 @@
 #include "QCheckBoxDelegate.h"
 #include <QCheckBox>
-
+#include <QPainter>
 #include "debug.h"
 
 #define THISINFO              0
@@ -41,6 +41,16 @@ void QCheckBoxDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                          const QModelIndex &index) const
 {
     //Ïû³ýÏÔÊ¾
+    QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(index.data());
+    QRectF rect = option.rect;
+    QColor color;
+    QString indexstr;
+    indexstr.sprintf("    %d",pdev->index);
+    painter->save();
+    painter->eraseRect(rect);
+    painter->setPen(color);
+    painter->drawText(rect,Qt::AlignVCenter|Qt::AlignLeft,indexstr);
+    painter->restore();
 }
 
 QWidget *QCheckBoxDelegate::createEditor(QWidget *parent,

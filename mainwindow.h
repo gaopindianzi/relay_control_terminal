@@ -17,7 +17,7 @@
 #include <QTranslator>
 #include "PasswordItemDef.h"
 
-#define    APP_DISPLAY_TIME             1
+#define    APP_DISPLAY_TIME             0
 
 
 void dumpthisdata(const char * buffer,int len);

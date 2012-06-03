@@ -429,7 +429,7 @@ void MainWindow::CreateDevcieTable(void)
         deviceTable->setHorizontalHeaderLabels(labels);
         deviceTable->horizontalHeader()->setResizeMode(0, QHeaderView::Fixed);
         index = 0;
-        deviceTable->horizontalHeader()->resizeSection(index++,25);
+        deviceTable->horizontalHeader()->resizeSection(index++,50);
         deviceTable->horizontalHeader()->resizeSection(index++,120);
         deviceTable->horizontalHeader()->resizeSection(index++,100);
         deviceTable->horizontalHeader()->resizeSection(index++,80);

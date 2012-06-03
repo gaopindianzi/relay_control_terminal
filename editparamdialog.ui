@@ -368,10 +368,10 @@
   <widget class="QLabel" name="labelStatusBar">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>15</x>
      <y>345</y>
      <width>601</width>
-     <height>10</height>
+     <height>11</height>
     </rect>
    </property>
    <property name="text">
