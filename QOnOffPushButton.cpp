@@ -6,6 +6,7 @@
 #include <QColor>
 #include <QRect>
 #include <QSharedPointer>
+#include <QImage>
 #include "QRelayDeviceControl.h"
 #include "mainwindow.h"
 #include "debug.h"
@@ -148,6 +149,7 @@ QRelayValueSingalChannalButton::QRelayValueSingalChannalButton(RelayDeviceShareP
 
 void QRelayValueSingalChannalButton::paintEvent ( QPaintEvent * event )
 {
+#if 0
     QPainter painter(this);
     int w = this->width() / pdevice->GetIoOutNum();
     this->pdevice->relay_bitmask.resize(this->pdevice->GetIoOutNum());
@@ -160,6 +162,16 @@ void QRelayValueSingalChannalButton::paintEvent ( QPaintEvent * event )
             painter.fillRect(i*w,0,w,this->height(),brush);
         }
     }
+#endif
+    QImage image(":/sys/sys_icon/sources/ON01.png");
+    QRectF target(this->rect().left(),this->rect().top(),this->height(),this->height());
+    //debuginfo(("image rect %d,%d,%d,%d",image.rect));
+    //target.setWidth(image.width());
+    QRectF source(0,0,50,50);
+    //QRectF target(this->rect().left(),this->rect().top(),this->rect().width(),this->rect().height());
+
+    QPainter painter(this);
+    painter.drawImage(target, image);
 }
 
 int QRelayValueSingalChannalButton::mouseAtButtonPosition(int x)

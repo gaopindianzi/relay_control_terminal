@@ -151,7 +151,7 @@
     <message>
         <location filename="mainwindow.cpp" line="145"/>
         <source>&amp;Edit device parameter...</source>
-        <translation type="unfinished">编辑设备参数...</translation>
+        <translation type="unfinished">设备参数...</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="148"/>
@@ -161,12 +161,12 @@
     <message>
         <location filename="mainwindow.cpp" line="151"/>
         <source>&amp;Change deivce ip config...</source>
-        <translation type="unfinished">修改设备的IP配置...</translation>
+        <translation type="unfinished">设备IP地址...</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="154"/>
         <source>&amp;Communication password...</source>
-        <translation type="unfinished">修改通信密码...</translation>
+        <translation type="unfinished">通信密码...</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="157"/>
@@ -297,12 +297,12 @@
     <message>
         <location filename="mainwindow.cpp" line="591"/>
         <source>Edit Device Parameter...</source>
-        <translation type="unfinished">编辑设备参数...</translation>
+        <translation type="unfinished">设备参数...</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="592"/>
         <source>Edit Ip Config...</source>
-        <translation type="unfinished">编辑IP配置...</translation>
+        <translation type="unfinished">IP配置...</translation>
     </message>
 </context>
 <context>

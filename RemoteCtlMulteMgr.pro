@@ -60,7 +60,9 @@ RC_FILE = myapp.rc
 
 OTHER_FILES += \
     myapp.rc \
-    remotectlmultemgr_zh.qm
+    remotectlmultemgr_zh.qm \
+    sources/ON.png \
+    sources/OFF.png
 
 RESOURCES += \
     resource_files.qrc
