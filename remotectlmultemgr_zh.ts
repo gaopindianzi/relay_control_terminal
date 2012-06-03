@@ -56,8 +56,7 @@
     <message>
         <location filename="editparamdialog.ui" line="155"/>
         <source>Device Parameter</source>
-        <translation type="unfinished">设备参数
-</translation>
+        <translation type="unfinished">设备参数</translation>
     </message>
     <message>
         <location filename="editparamdialog.ui" line="167"/>
@@ -111,18 +110,17 @@
         <translation type="unfinished">状态：</translation>
     </message>
     <message>
-        <location filename="editparamdialog.cpp" line="79"/>
+        <location filename="editparamdialog.cpp" line="78"/>
         <source>Status:</source>
-        <translation type="unfinished">状态：
-</translation>
+        <translation type="unfinished">状态：</translation>
     </message>
     <message>
-        <location filename="editparamdialog.cpp" line="111"/>
+        <location filename="editparamdialog.cpp" line="110"/>
         <source>Warning</source>
         <translation type="unfinished">注意</translation>
     </message>
     <message>
-        <location filename="editparamdialog.cpp" line="111"/>
+        <location filename="editparamdialog.cpp" line="110"/>
         <source>The input password is not the equal!</source>
         <translation type="unfinished">两次输入的密码不一致！</translation>
     </message>
@@ -237,14 +235,14 @@
     </message>
     <message>
         <location filename="mainwindow.cpp" line="404"/>
-        <location filename="mainwindow.cpp" line="590"/>
+        <location filename="mainwindow.cpp" line="589"/>
         <source>DeviceTable</source>
         <translation type="unfinished">设备列表</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="422"/>
         <source>S</source>
-        <translation type="unfinished">S</translation>
+        <translation type="unfinished">选择</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="422"/>
@@ -292,17 +290,17 @@
         <translation type="unfinished">设备时间</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="591"/>
+        <location filename="mainwindow.cpp" line="590"/>
         <source>Exit</source>
         <translation type="unfinished">退出</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="592"/>
+        <location filename="mainwindow.cpp" line="591"/>
         <source>Edit Device Parameter...</source>
         <translation type="unfinished">编辑设备参数...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="593"/>
+        <location filename="mainwindow.cpp" line="592"/>
         <source>Edit Ip Config...</source>
         <translation type="unfinished">编辑IP配置...</translation>
     </message>
@@ -334,31 +332,31 @@
     </message>
     <message>
         <location filename="qeditipconfigdialog.ui" line="63"/>
-        <location filename="qeditipconfigdialog.ui" line="255"/>
+        <location filename="qeditipconfigdialog.ui" line="271"/>
         <source>IpAddr:</source>
         <translation type="unfinished">IP地址：</translation>
     </message>
     <message>
         <location filename="qeditipconfigdialog.ui" line="79"/>
-        <location filename="qeditipconfigdialog.ui" line="239"/>
+        <location filename="qeditipconfigdialog.ui" line="255"/>
         <source>Netmask:</source>
         <translation type="unfinished">子网掩码：</translation>
     </message>
     <message>
         <location filename="qeditipconfigdialog.ui" line="95"/>
-        <location filename="qeditipconfigdialog.ui" line="223"/>
+        <location filename="qeditipconfigdialog.ui" line="239"/>
         <source>GateWay:</source>
         <translation type="unfinished">网关：</translation>
     </message>
     <message>
         <location filename="qeditipconfigdialog.ui" line="114"/>
-        <location filename="qeditipconfigdialog.ui" line="274"/>
+        <location filename="qeditipconfigdialog.ui" line="223"/>
         <source>DNS:</source>
-        <translation type="unfinished">DNS：</translation>
+        <translation type="obsolete">域名服务器：</translation>
     </message>
     <message>
         <source>DNS:    </source>
-        <translation type="obsolete">DNS：</translation>
+        <translation type="obsolete">域名服务器：</translation>
     </message>
     <message>
         <location filename="qeditipconfigdialog.ui" line="171"/>
@@ -366,22 +364,22 @@
         <translation type="unfinished">新配置</translation>
     </message>
     <message>
-        <location filename="qeditipconfigdialog.ui" line="291"/>
+        <location filename="qeditipconfigdialog.ui" line="288"/>
         <source>Operation</source>
         <translation type="unfinished">操作</translation>
     </message>
     <message>
-        <location filename="qeditipconfigdialog.ui" line="303"/>
+        <location filename="qeditipconfigdialog.ui" line="300"/>
         <source>Read</source>
         <translation type="unfinished">读</translation>
     </message>
     <message>
-        <location filename="qeditipconfigdialog.ui" line="316"/>
+        <location filename="qeditipconfigdialog.ui" line="313"/>
         <source>Write</source>
         <translation type="unfinished">写</translation>
     </message>
     <message>
-        <location filename="qeditipconfigdialog.ui" line="329"/>
+        <location filename="qeditipconfigdialog.ui" line="326"/>
         <source>ResetDevice</source>
         <translation type="unfinished">复位设备</translation>
     </message>
@@ -470,32 +468,32 @@
         <translation type="unfinished">操作</translation>
     </message>
     <message>
-        <location filename="qpasswordmangerdialog.ui" line="198"/>
+        <location filename="qpasswordmangerdialog.ui" line="145"/>
         <source>Load List</source>
         <translation type="unfinished">导入列表</translation>
     </message>
     <message>
-        <location filename="qpasswordmangerdialog.ui" line="211"/>
+        <location filename="qpasswordmangerdialog.ui" line="158"/>
         <source>Save List</source>
         <translation type="unfinished">导出列表</translation>
     </message>
     <message>
-        <location filename="qpasswordmangerdialog.ui" line="145"/>
+        <location filename="qpasswordmangerdialog.ui" line="171"/>
         <source>Add</source>
         <translation type="unfinished">添加</translation>
     </message>
     <message>
-        <location filename="qpasswordmangerdialog.ui" line="158"/>
+        <location filename="qpasswordmangerdialog.ui" line="184"/>
         <source>Remove</source>
         <translation type="unfinished">删除</translation>
     </message>
     <message>
-        <location filename="qpasswordmangerdialog.ui" line="171"/>
+        <location filename="qpasswordmangerdialog.ui" line="197"/>
         <source>Cancel</source>
         <translation type="unfinished">取消</translation>
     </message>
     <message>
-        <location filename="qpasswordmangerdialog.ui" line="184"/>
+        <location filename="qpasswordmangerdialog.ui" line="210"/>
         <source>OK</source>
         <translation type="unfinished">确定</translation>
     </message>
@@ -529,79 +527,79 @@ do you replace the exist password item?</source>
 <context>
     <name>QRelayDeviceControl</name>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="45"/>
+        <location filename="QRelayDeviceControl.cpp" line="50"/>
         <source>none.</source>
         <translation type="unfinished">none</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="56"/>
+        <location filename="QRelayDeviceControl.cpp" line="63"/>
         <source>On Line</source>
         <translation type="unfinished">在线</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="61"/>
+        <location filename="QRelayDeviceControl.cpp" line="68"/>
         <source>Off Line</source>
         <translation type="unfinished">离线</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="135"/>
+        <location filename="QRelayDeviceControl.cpp" line="142"/>
         <source>sending set device name command...</source>
         <translation type="unfinished">发送修改设备名命令中...</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="158"/>
-        <location filename="QRelayDeviceControl.cpp" line="181"/>
+        <location filename="QRelayDeviceControl.cpp" line="165"/>
+        <location filename="QRelayDeviceControl.cpp" line="188"/>
         <source>sending set device group command...</source>
         <translation type="unfinished">发送修改设备组名命令中...</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="198"/>
+        <location filename="QRelayDeviceControl.cpp" line="205"/>
         <source>start writing new device infamation command...</source>
         <translation type="unfinished">往设备写新的设备信息...</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="217"/>
+        <location filename="QRelayDeviceControl.cpp" line="224"/>
         <source>Reset device...</source>
         <translation type="unfinished">复位设备中...</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="266"/>
-        <location filename="QRelayDeviceControl.cpp" line="402"/>
+        <location filename="QRelayDeviceControl.cpp" line="273"/>
+        <location filename="QRelayDeviceControl.cpp" line="409"/>
         <source>set io out bits...</source>
         <translation type="unfinished">设置IO输出位...</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="446"/>
+        <location filename="QRelayDeviceControl.cpp" line="453"/>
         <source>2 ch dig input,2 ch relay output.</source>
         <translation type="unfinished">2路继电器输出控制卡.</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="447"/>
+        <location filename="QRelayDeviceControl.cpp" line="454"/>
         <source>4 ch dig input,4 ch relay output.</source>
         <translation type="unfinished">4路继电器输出控制卡.</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="448"/>
+        <location filename="QRelayDeviceControl.cpp" line="455"/>
         <source>8 ch dig input,8 ch relay output.</source>
         <translation type="unfinished">8继电器输出控制卡.</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="449"/>
+        <location filename="QRelayDeviceControl.cpp" line="456"/>
         <source>16 ch relay output.</source>
         <translation type="unfinished">16路继电器输出控制卡.</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="595"/>
+        <location filename="QRelayDeviceControl.cpp" line="602"/>
         <source>Reseting...</source>
         <translation type="unfinished">正在复位...</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="659"/>
+        <location filename="QRelayDeviceControl.cpp" line="666"/>
         <source>device(</source>
         <translation type="unfinished">设备(</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="659"/>
+        <location filename="QRelayDeviceControl.cpp" line="666"/>
         <source>) infomation is updated.</source>
         <translation type="unfinished">)信息已更新.</translation>
     </message>
