@@ -81,6 +81,7 @@ private slots:
     void OpenAllListDeviceIoOutput(void);
     void CloseAllListDeviceIoOutput(void);
     void SelectChineseLanguage(void);
+    void AboutAction(void);
 signals:
     void DeviceUpdata(QSharedPointer<QRelayDeviceControl> & pdev);
 private:
@@ -94,6 +95,7 @@ private:
     QAction * open_all_device;
     QAction * close_all_device;
     QAction * selectChineseLanguage;
+    QAction * about_act;
     QMenu *fileMenu;
     QMenu *toolsMenu;
 private:

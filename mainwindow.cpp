@@ -13,6 +13,7 @@
 #include "qpasswordmangerdialog.h"
 #include "qioexpendsettingdialog.h"
  #include <QCoreApplication>
+#include "AboutDialog.h"
 
 
 #include "debug.h"
@@ -167,6 +168,10 @@ void MainWindow::CreateAction(void)
     selectChineseLanguage = new QAction(tr("Chinese"),this);
     connect(selectChineseLanguage,SIGNAL(triggered()),this,SLOT(SelectChineseLanguageAction()));
 
+    about_act = new QAction(tr("About"),this);
+    connect(about_act,SIGNAL(triggered()),this,SLOT(AboutAction()));
+
+
     //系统后台图标
     minimizeAction = new QAction(tr("Mi&nimize"), this);
     connect(minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
@@ -261,7 +266,8 @@ void MainWindow::CreateMenu(void)
     toolsMenu->addAction(desecect_all);
     toolsMenu->addAction(open_all_device);
     toolsMenu->addAction(close_all_device);
-
+    toolsMenu = menuBar()->addMenu(tr("Help"));
+    toolsMenu->addAction(about_act);
 
 
 
@@ -596,4 +602,12 @@ void MainWindow::retranslateUI(void)
 void MainWindow::SelectChineseLanguage(void)
 {
     retranslateUI();
+}
+
+
+
+void MainWindow::AboutAction(void)
+{
+    AboutDialog dlg;
+    dlg.exec();
 }

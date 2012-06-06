@@ -149,29 +149,18 @@ QRelayValueSingalChannalButton::QRelayValueSingalChannalButton(RelayDeviceShareP
 
 void QRelayValueSingalChannalButton::paintEvent ( QPaintEvent * event )
 {
-#if 0
     QPainter painter(this);
-    int w = this->width() / pdevice->GetIoOutNum();
-    this->pdevice->relay_bitmask.resize(this->pdevice->GetIoOutNum());
-    for(int i=0;i<pdevice->GetIoOutNum();i++) {        
-        if(this->pdevice->relay_bitmask[i]) {
-            QBrush brush(QColor(0,250,0));
-            painter.fillRect(i*w,0,w,this->height(),brush);
+    QImage image;
+    int num = pdevice->GetIoOutNum();
+    for(int i=0;i<num;i++) {
+        if(pdevice->relay_bitmask[i]) {
+            image.load(":/sys/sys_icon/sources/ON01.png");
         } else {
-            QBrush brush(QColor(200,200,200));
-            painter.fillRect(i*w,0,w,this->height(),brush);
+            image.load(":/sys/sys_icon/sources/OFF01.png");
         }
+        QRectF target(this->rect().left()+this->width()*i/num,this->rect().top(),this->height(),this->height());
+        painter.drawImage(target, image);
     }
-#endif
-    QImage image(":/sys/sys_icon/sources/ON01.png");
-    QRectF target(this->rect().left(),this->rect().top(),this->height(),this->height());
-    //debuginfo(("image rect %d,%d,%d,%d",image.rect));
-    //target.setWidth(image.width());
-    QRectF source(0,0,50,50);
-    //QRectF target(this->rect().left(),this->rect().top(),this->rect().width(),this->rect().height());
-
-    QPainter painter(this);
-    painter.drawImage(target, image);
 }
 
 int QRelayValueSingalChannalButton::mouseAtButtonPosition(int x)
