@@ -211,8 +211,8 @@ void MainWindow::CreateAction(void)
     //trayIconMenu->addAction(maximizeAction);
 
     //trayIconMenu->addSeparator();
-    trayIconMenu->addAction(quitact);
     trayIconMenu->addAction(restoreAction);
+    trayIconMenu->addAction(quitact);
 
     trayIcon = new QSystemTrayIcon(sysicon,this);
     trayIcon->setContextMenu(trayIconMenu);
@@ -462,7 +462,10 @@ void MainWindow::CreateDevcieTable(void)
         deviceTable->horizontalHeader()->resizeSection(index++,100);
         deviceTable->horizontalHeader()->resizeSection(index++,80);
         deviceTable->horizontalHeader()->resizeSection(index++,80);
+
+        //deviceTable->horizontalHeader()->setResizeMode(index, QHeaderView::Fixed);
         deviceTable->horizontalHeader()->resizeSection(index++,300);
+
         deviceTable->horizontalHeader()->resizeSection(index++,60);
         deviceTable->horizontalHeader()->resizeSection(index++,60);
         deviceTable->horizontalHeader()->resizeSection(index++,50);

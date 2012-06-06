@@ -433,6 +433,7 @@ int  QRelayDeviceControl::GetIoOutNum(void)
     case EXT_BOARD_IS_2CHIN_2CHOUT_BOX:return 2;
     case EXT_BOARD_IS_4CHIN_4CHOUT: return 4;
     case EXT_BOARD_IS_8CHIN_8CHOUT_V2: return 8;
+    case RELAY_PLATFORM_16CHOUT_HOST_RESET:
     case EXT_BOARD_IS_16CHOUT:return 16;
     default:
         return 2;
@@ -447,6 +448,7 @@ QString QRelayDeviceControl::GetDeviceModelName(void)
     case EXT_BOARD_IS_4CHIN_4CHOUT: return tr("4 ch dig input,4 ch relay output.");
     case EXT_BOARD_IS_8CHIN_8CHOUT_V2: return tr("8 ch dig input,8 ch relay output.");
     case EXT_BOARD_IS_16CHOUT:return tr("16 ch relay output.");
+    case RELAY_PLATFORM_16CHOUT_HOST_RESET: return tr("16 ch remote host reseter.");
     }
 }
 
