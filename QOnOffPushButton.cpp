@@ -160,6 +160,10 @@ void QRelayValueSingalChannalButton::paintEvent ( QPaintEvent * event )
         }
         QRectF target(this->rect().left()+this->width()*i/num,this->rect().top(),image.width(),this->height());
         painter.drawImage(target, image);
+        //Ð´Â·Êý
+        QString numstr;
+        numstr.sprintf("  %d",i+1);
+        painter.drawText(target,Qt::AlignTop|Qt::AlignLeft,numstr);
     }
 }
 
