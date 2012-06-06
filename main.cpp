@@ -9,6 +9,7 @@
 #include <QWidget>
 #include <QObject>
 #include <QTranslator>
+#include <QSplashScreen>
 #include "mainwindow.h"
 
 
@@ -50,6 +51,16 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForCStrings(QTextCodec::codecForLocale());
     MainWindow w;
 
+
+    QSplashScreen * splash = new QSplashScreen;
+    splash->setPixmap(QPixmap(":/sys/sys_icon/sources/start.png"));
+    splash->show();
+
+    w.sleep(5);
     w.show();
+    splash->finish(&w);
+
     return a.exec();
+
+    delete splash;
 }

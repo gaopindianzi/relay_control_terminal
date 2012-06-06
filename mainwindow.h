@@ -15,6 +15,7 @@
 #include <QMenu>
 #include <QSystemTrayIcon>
 #include <QTranslator>
+#include <QThread>
 #include "PasswordItemDef.h"
 
 #define    APP_DISPLAY_TIME             0
@@ -42,6 +43,15 @@ private:
 
 
 
+class QDelay : public QThread
+{
+public:
+    QDelay();
+public:
+    void run();
+    void delay(unsigned int ms);
+};
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -66,6 +76,7 @@ protected: //Ðéº¯Êý
 public:
     void InitUdpSocket(void);
     void processTheDeviceData(QByteArray & data,QHostAddress & sender,quint16 senderport);
+    void sleep(unsigned int ms);
 private slots:
     void showMinimized(void);
     void UdpreadPendingDatagrams();

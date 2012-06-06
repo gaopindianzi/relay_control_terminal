@@ -14,6 +14,7 @@
 #include "qioexpendsettingdialog.h"
  #include <QCoreApplication>
 #include "AboutDialog.h"
+#include <QThread>
 
 
 #include "debug.h"
@@ -72,6 +73,18 @@ void  QDeviceControlWidget::RemoveOneItemActioN(void)
 }
 
 
+
+QDelay::QDelay()
+{
+}
+void QDelay::run()
+{
+}
+
+void QDelay::delay(unsigned int ms)
+{
+    this->sleep(ms);
+}
 
 
 
@@ -133,6 +146,15 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+
+
+void MainWindow::sleep(unsigned int ms)
+{
+    QDelay d;
+    d.delay(ms);
+}
+
 void MainWindow::DevcieAckStstus(QString ackstr)
 {
     statusBar()->showMessage(tr("Status:")+ackstr);
@@ -183,7 +205,7 @@ void MainWindow::CreateAction(void)
     connect(restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
 
 
-    sysicon.addFile(":/sys/sys_icon/remote_main.ico");
+    sysicon.addPixmap(QPixmap(":/sys/sys_icon/sources/LOGO.png"));
     trayIconMenu = new QMenu(this);
     //trayIconMenu->addAction(minimizeAction);
     //trayIconMenu->addAction(maximizeAction);

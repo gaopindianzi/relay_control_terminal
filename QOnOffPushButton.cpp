@@ -154,11 +154,11 @@ void QRelayValueSingalChannalButton::paintEvent ( QPaintEvent * event )
     int num = pdevice->GetIoOutNum();
     for(int i=0;i<num;i++) {
         if(pdevice->relay_bitmask[i]) {
-            image.load(":/sys/sys_icon/sources/ON01.png");
+            image.load(":/sys/sys_icon/sources/ON.png");
         } else {
-            image.load(":/sys/sys_icon/sources/OFF01.png");
+            image.load(":/sys/sys_icon/sources/OFF.png");
         }
-        QRectF target(this->rect().left()+this->width()*i/num,this->rect().top(),this->height(),this->height());
+        QRectF target(this->rect().left()+this->width()*i/num,this->rect().top(),image.width(),this->height());
         painter.drawImage(target, image);
     }
 }

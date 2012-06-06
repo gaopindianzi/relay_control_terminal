@@ -1,11 +1,11 @@
 <RCC>
     <qresource prefix="/sys/sys_icon">
         <file>remote_main.ico</file>
+        <file>sources/ABOUT.png</file>
+        <file>sources/LOGO.png</file>
         <file>sources/OFF.png</file>
         <file>sources/ON.png</file>
-        <file>sources/OFF01.png</file>
-        <file>sources/ON01.png</file>
-        <file>sources/about.jpg</file>
+        <file>sources/start.png</file>
     </qresource>
     <qresource prefix="/icon/heart">
         <file>heart.svg</file>

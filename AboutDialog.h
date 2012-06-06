@@ -2,6 +2,8 @@
 #define ABOUTDIALOG_H
 
 #include <QDialog>
+#include <QPainter>
+#include <QImage>
 
 namespace Ui {
 class AboutDialog;
