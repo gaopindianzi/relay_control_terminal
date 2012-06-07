@@ -37,7 +37,7 @@ QRelayDeviceControl::QRelayDeviceControl(QObject * parent) :
     connect(timer, SIGNAL(timeout()), this, SLOT(TimeoutUpdataInfo()));
 
     timer->start(1000);
-    is_checked = true;
+    is_checked = false;
     online_timeout = 0;
     is_online = false;
     need_encryption = false;

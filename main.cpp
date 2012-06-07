@@ -20,6 +20,12 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+
+    appTranslator.load(":/language/remotectlmultemgr_zh.qm");
+    a.installTranslator(&appTranslator);
+
+
+
     QSystemSemaphore sema("JAMKey",1,QSystemSemaphore::Open);
     sema.acquire();   // 在临界区操作共享内存   SharedMemory
     QSharedMemory mem("SystemObject");// 全局对象名
@@ -42,8 +48,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    appTranslator.load(":/language/remotectlmultemgr_zh.qm");
-    a.installTranslator(&appTranslator);
+
 
 
 
