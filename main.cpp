@@ -25,8 +25,8 @@ int main(int argc, char *argv[])
     QSharedMemory mem("SystemObject");// 全局对象名
     if (!mem.create(1))// 如果全局对象以存在则退出
     {
-        QMessageBox box(QMessageBox::Warning,
-                        "Warning","The program has already been running!");
+        QMessageBox box(QMessageBox::Warning,QObject::tr("Warning"),
+                        QObject::tr("The program has already been running!"));
         box.exec();
         sema.release();// 如果是 Unix 系统，会自动释放。
         return 0;
