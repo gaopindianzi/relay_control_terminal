@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QSharedPointer>
 #include <QUdpSocket>
+#include <QTcpSocket>
  #include <QBitArray>
 #include <QTimer>
 #include <QTableWidgetItem>
@@ -12,7 +13,10 @@
 #include "rc4.h"
 #include "PasswordItemDef.h"
 
-
+#define  TCP_CMD_IDLE                0
+#define  TCP_CMD_SENDING         1
+#define  TCP_CMD_ACK_OK           2
+#define  TCP_CMD_TIMEOUT         3
 
 
 class QRelayDeviceControl : public QObject
@@ -82,6 +86,17 @@ private:
     //QEncryptRc4    rc4;
     QTimer * timer;
     QString   ack_status;
+private:  //TCP接口数据
+    QTcpSocket    tcp_socket;
+    QTimer   tcp_updata_timer;
+    bool   tcp_is_connected;
+    int      tcp_cmd_state;
+    int      tcp_cmd_count;
+private slots:
+    void	tcpconnected ();
+    void	tcpdisconnected ();
+    void	tcpreadyRead ();
+    void tcp_timer();
 public:
     bool       is_checked;
     bool       is_online;

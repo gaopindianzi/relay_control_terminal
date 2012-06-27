@@ -293,7 +293,7 @@ void MainWindow::CreateMenu(void)
 
 
 
-#if     0 //for debug
+#if     1 //for debug
     password_item itm;
     itm.alias = "admin";
     itm.pwd = "admin";

@@ -6,7 +6,7 @@
 #include "rc4.h"
 
 #include "debug.h"
-#define THISINFO             0
+#define THISINFO             1
 #define THISERROR           1
 #define THISASSERT         1
 
@@ -28,22 +28,66 @@ void dumpthisdata(const char * buffer,int len)
 }
 
 QRelayDeviceControl::QRelayDeviceControl(QObject * parent) :
-    QObject(parent),
-    bdevcie_info_is_useful(false),
-    relay_bitmask_inited(false)
+    QObject(parent)
 {
     pdev_info = QSharedPointer<device_info_st>(new device_info_st);
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(TimeoutUpdataInfo()));
+    connect(&tcp_updata_timer, SIGNAL(timeout()), this, SLOT(tcp_timer()));
 
     timer->start(1000);
+    tcp_updata_timer.start(1000);
     is_checked = false;
     online_timeout = 0;
     is_online = false;
     need_encryption = false;
 
+    bdevcie_info_is_useful = false;
+    tcp_is_connected  = false;
+    relay_bitmask_inited  = false;
+
+    //TCP信号
+    connect(&tcp_socket,SIGNAL(connected()),this,SLOT(tcpconnected()));
+    connect(&tcp_socket,SIGNAL(disconnected()),this,SLOT(tcpdisconnected()));
+    connect(&tcp_socket,SIGNAL(readyRead()),this,SLOT(tcpreadyRead()));
+
+
     ack_status = tr("none.");
     //rc4.SetKey((unsigned char *)"admin",strlen("admin"));
+}
+
+void	QRelayDeviceControl::tcpconnected ()
+{
+    debuginfo(("tcp connected."));
+    tcp_is_connected = true;
+}
+void	QRelayDeviceControl::tcpdisconnected ()
+{
+    debuginfo(("tcp disconnected."));
+    tcp_is_connected = false;
+}
+void	QRelayDeviceControl::tcpreadyRead ()
+{
+    debuginfo(("tcp readyRead."));
+}
+
+void QRelayDeviceControl::tcp_timer()
+{
+    //debuginfo(("tcp tcp_timer."));
+    if(tcp_is_connected) {
+        //发送命令
+        if(this->tcp_cmd_state == TCP_CMD_IDLE) {
+            //发送读名字命令
+        } else if(tcp_cmd_state == TCP_CMD_SENDING) {
+            //等待接收
+        } else if(tcp_cmd_state == TCP_CMD_ACK_OK) {
+            //接收到了，继续发送下一个
+        } else if(tcp_cmd_state == TCP_CMD_TIMEOUT) {
+            //完毕
+        }
+    } else {
+        debuginfo((" is ko"));
+    }
 }
 
 void QRelayDeviceControl::TimeoutUpdataInfo(void)
@@ -656,7 +700,13 @@ void QRelayDeviceControl::SetDeviceInfo(QByteArray & data)
 
     str += netmask + gateway + mac + timeout;
 
-    bdevcie_info_is_useful = true;
+    if(!bdevcie_info_is_useful) {
+        //设备有效，连接到他的TCP端口
+        debuginfo(("device is useful..."));
+        bdevcie_info_is_useful = true;
+        //创建Tcp连接
+        tcp_socket.connectToHost(GetDeviceAddress(),2000);
+    }
 
     ack_status = tr("device(") + this->GetDeviceAddress() + tr(") infomation is updated.");
     if(is_checked) {

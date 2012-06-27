@@ -18,7 +18,7 @@
 #include <QThread>
 #include "PasswordItemDef.h"
 
-#define    APP_DISPLAY_TIME             0
+#define    APP_DISPLAY_TIME             1
 
 
 void dumpthisdata(const char * buffer,int len);
