@@ -82,7 +82,7 @@ void	QRelayDeviceControl::tcpreadyRead ()
     if(size >= sizeof(CmdHead)) {
         CmdHead  * pcmd = (CmdHead *)arry.data_ptr()->data;
         if(pcmd->cmd_index == cmd_index) {
-            tcp_cmd_state = TCP_CMD_ACK_OK;
+
         } else {
             debugerror(("tcp ack data error!"));
             return ;
@@ -102,6 +102,7 @@ void	QRelayDeviceControl::tcpreadyRead ()
                 num |= pio->io_addr[0];
                 if(num < this->GetIoOutNum()) {
                     io_out_names[num] = aryname;
+                    tcp_cmd_state = TCP_CMD_ACK_OK;
                 }
                 //UiSetIoName(rio->io_addr,aryname);
                 //QMessageBox box(QMessageBox::Question,tr("Note!"),tr("this is :")+aryname);

@@ -36,7 +36,7 @@ QDeviceControlWidget::QDeviceControlWidget(QWidget * parent)
 
 void QDeviceControlWidget::contextMenuEvent(QContextMenuEvent *event)
 {
-#if 0  //尚未实现
+#if 1 //尚未实现
     debuginfo(("at context event."));
     const QPoint & pos = event->pos();
     QTableWidgetItem * item = this->itemAt(pos);
