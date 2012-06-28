@@ -47,7 +47,8 @@ HEADERS  += mainwindow.h \
     rc4.h \
     PasswordItemDef.h \
     qioexpendsettingdialog.h \
-    AboutDialog.h
+    AboutDialog.h \
+    command_datatype.h
 
 FORMS    += mainwindow.ui \
     editparamdialog.ui \

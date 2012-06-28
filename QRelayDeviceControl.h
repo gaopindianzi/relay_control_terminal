@@ -8,6 +8,7 @@
  #include <QBitArray>
 #include <QTimer>
 #include <QTableWidgetItem>
+#include <QVector>
 #include "multimgr_device_dev.h"
 #include "CDeviceDelegate.h"
 #include "rc4.h"
@@ -57,6 +58,7 @@ public:
     QString GetAckStatus(void);
     int        GetIoOutNum(void);
     QString GetDeviceModelName(void);
+    QString GetDeviceIoOutName(int num);
     void      ReadIoOut(void);
     int        ReadIoOutAck(QByteArray & data);
     void      ConvertIoOutOneBitAndSendCmd(int bit);
@@ -92,6 +94,9 @@ private:  //TCP接口数据
     bool   tcp_is_connected;
     int      tcp_cmd_state;
     int      tcp_cmd_count;
+    unsigned int cmd_index;
+    bool   io_out_name_need_updata;
+    QVector<QString>  io_out_names;
 private slots:
     void	tcpconnected ();
     void	tcpdisconnected ();
