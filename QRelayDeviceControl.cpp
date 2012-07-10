@@ -35,23 +35,26 @@ QRelayDeviceControl::QRelayDeviceControl(QObject * parent) :
 {
     pdev_info = QSharedPointer<device_info_st>(new device_info_st);
     timer = new QTimer(this);
+    //UDP定时器
     connect(timer, SIGNAL(timeout()), this, SLOT(TimeoutUpdataInfo()));
+    //TCP定时器
     connect(&tcp_updata_timer, SIGNAL(timeout()), this, SLOT(tcp_timer()));
-
+    //
     timer->start(1000);
-    tcp_updata_timer.start(500);
+    tcp_updata_timer.start(1000);
     is_checked = false;
     online_timeout = 0;
     is_online = false;
     need_encryption = false;
 
     bdevcie_info_is_useful = false;
-    tcp_is_connected  = false;
     relay_bitmask_inited  = false;
-    io_out_name_need_updata = true;
 
+
+    tcp_port = 2000;
     cmd_index = 0;
-    tcp_cmd_state = 0;
+    SetTcpSysStatus(TCP_CMD_POWER_UP,tr("none"));
+    sys_init_bitmask = SYS_IO_NAME|SYS_IO_TIME;
 
     //TCP信号
     connect(&tcp_socket,SIGNAL(connected()),this,SLOT(tcpconnected()));
@@ -63,16 +66,22 @@ QRelayDeviceControl::QRelayDeviceControl(QObject * parent) :
     //rc4.SetKey((unsigned char *)"admin",strlen("admin"));
 }
 
+QRelayDeviceControl::~QRelayDeviceControl()
+{
+    tcp_socket.close();
+}
+
 void	QRelayDeviceControl::tcpconnected ()
 {
     debuginfo(("tcp connected."));
-    tcp_is_connected = true;
+    SetTcpSysStatus(TCP_CMD_IDLE,tr("idle"));
 }
 void	QRelayDeviceControl::tcpdisconnected ()
-{
+{    
     debuginfo(("tcp disconnected."));
-    tcp_is_connected = false;
+    SetTcpSysStatus(TCP_CMD_WAIT_LINE_OK,tr("wait line ok..."));
 }
+
 void	QRelayDeviceControl::tcpreadyRead ()
 {
     QByteArray arry;
@@ -92,21 +101,7 @@ void	QRelayDeviceControl::tcpreadyRead ()
         case CMD_GET_IO_NAME:
         {
             if(pcmd->cmd_len >= sizeof(CmdIoName)) {
-                CmdIoName * pio = (CmdIoName *)GET_CMD_DATA(pcmd);
-                //更新某路的名字
-                QString aryname(QString::fromLocal8Bit((const char *)pio->io_name));
-                debuginfo(("read back io anme:%s",aryname.toAscii().data()));
-                io_out_names.resize(this->GetIoOutNum());
-                int num = pio->io_addr[1];
-                num <<= 8;
-                num |= pio->io_addr[0];
-                if(num < this->GetIoOutNum()) {
-                    io_out_names[num] = aryname;
-                    tcp_cmd_state = TCP_CMD_ACK_OK;
-                }
-                //UiSetIoName(rio->io_addr,aryname);
-                //QMessageBox box(QMessageBox::Question,tr("Note!"),tr("this is :")+aryname);
-                //box.exec();
+                TcpAckIoNames(arry);
             }
         }
         break;
@@ -118,55 +113,40 @@ void	QRelayDeviceControl::tcpreadyRead ()
 
 void QRelayDeviceControl::tcp_timer()
 {
-    static int  io_addr = 0;
-    //debuginfo(("tcp tcp_timer,sizeof(cmd)=%d",sizeof(CmdHead)));
-    if(tcp_is_connected) {
-        //发送命令
-        if(this->tcp_cmd_state == TCP_CMD_IDLE) {
-            //发送读名字命令
-            io_addr = 0;
-            debuginfo(("send read io start."));
-            QByteArray data;
-            data.resize(sizeof(CmdHead) + sizeof(CmdIoName));
-            CmdHead  * pcmd = (CmdHead *)data.data_ptr()->data;
-            CmdIoName * pio = (CmdIoName *)GET_CMD_DATA(pcmd);
-            pcmd->cmd = CMD_GET_IO_NAME;
-            pcmd->cmd_index = ++cmd_index;
-            pcmd->cmd_len = sizeof(CmdIoName);
-            pcmd->cmd_option = 0;
-            pio->io_addr[0] = (unsigned char)(io_addr & 0xFF);
-            pio->io_addr[1] = (unsigned char)(io_addr >> 8);
-            io_addr++;
-            tcp_cmd_state = TCP_CMD_SENDING;
-            this->tcp_socket.write(data.data(),data.size());
-        } else if(tcp_cmd_state == TCP_CMD_SENDING) {
-            //等待接收
-        } else if(tcp_cmd_state == TCP_CMD_ACK_OK) {
-            //接收到了，继续发送下一个
-            if(io_out_name_need_updata) {
-                QByteArray data;
-                data.resize(sizeof(CmdHead) + sizeof(CmdIoName));
-                CmdHead  * pcmd = (CmdHead *)data.data_ptr()->data;
-                CmdIoName * pio = (CmdIoName *)GET_CMD_DATA(pcmd);
-                pcmd->cmd = CMD_GET_IO_NAME;
-                pcmd->cmd_index = ++cmd_index;
-                pcmd->cmd_len = sizeof(CmdIoName);
-                pcmd->cmd_option = 0;
-                pio->io_addr[0] = (unsigned char)(io_addr & 0xFF);
-                pio->io_addr[1] = (unsigned char)(io_addr >> 8);
-                io_addr++;
-                tcp_cmd_state = TCP_CMD_SENDING;
-                this->tcp_socket.write(data.data(),data.size());
-            }
-            if(io_addr >= this->GetIoOutNum()) {
-                io_out_name_need_updata = false;
-            }
-        } else if(tcp_cmd_state == TCP_CMD_TIMEOUT) {
-            //完毕
+    if(tcp_sys_state == TCP_CMD_WAIT_LINE_OK) {
+        if(++sys_timeout_count >= 5) {
+            tcp_socket.connectToHost(GetDeviceAddress(),tcp_port);
+            SetTcpSysStatus(TCP_CMD_CONNECTING,tr("tcp connecting to the device..."));
         }
-    } else {
-        debuginfo((" is ko"));
-        tcp_cmd_state = TCP_CMD_IDLE;
+    } else if(tcp_sys_state == TCP_CMD_CONNECTING) {
+        if(++sys_timeout_count >= 30) {
+            tcp_socket.close();
+            SetTcpSysStatus(TCP_CMD_WAIT_LINE_OK,tr("tcp waiting line ok..."));
+        }
+    } else if(tcp_sys_state == TCP_CMD_IDLE) {
+        if(sys_init_bitmask & SYS_IO_NAME) {
+            TcpStartReadIoNames();
+        } else if(sys_init_bitmask & SYS_IO_TIME) {
+            sys_init_bitmask &= ~SYS_IO_TIME;
+            sys_timeout_count = 0;
+        } else if(++sys_timeout_count >= 8)  {
+            sys_init_bitmask |= SYS_IO_NAME|SYS_IO_TIME;
+        }
+    } else if(tcp_sys_state == TCP_CMD_WAIT_ACK) {
+        if(++sys_timeout_count >= 8) {
+            //指令超时
+            SetTcpSysStatus(TCP_CMD_WAIT_ACK,tr("sending command timeout,try to wait again..."));
+            if(++tcp_ack_timeout_count > 3) {
+                //次数超过了
+                SetTcpSysStatus(TCP_CMD_WAIT_LINE_OK,tr("sending command timeout,close the tcp connect and wait sometime..."));
+            } else {
+                //判断什么指令，重新发送一遍
+                if(tcp_cmd_number == CMD_GET_IO_NAME) {
+                    TcpReadIoNames();
+                } else { //别的指令
+                }
+            }
+        }
     }
 }
 
@@ -176,6 +156,70 @@ QString QRelayDeviceControl::GetDeviceIoOutName(int num)
         return io_out_names[num];
     }
     return "";
+}
+
+void  QRelayDeviceControl::TcpStartReadIoNames(void)
+{
+    QByteArray data;
+
+    io_out_name_index = 0;
+    io_out_name_count =  GetIoOutNum();
+    tcp_ack_timeout_count = 0;
+
+    data.resize(sizeof(CmdHead) + sizeof(CmdIoName));
+    CmdHead  * pcmd = (CmdHead *)data.data_ptr()->data;
+    CmdIoName * pio = (CmdIoName *)GET_CMD_DATA(pcmd);
+    pcmd->cmd = tcp_cmd_number = CMD_GET_IO_NAME;
+    pcmd->cmd_index = ++cmd_index;
+    pcmd->cmd_len = sizeof(CmdIoName);
+    pcmd->cmd_option = 0;
+    pio->io_addr[0] = (unsigned char)(io_out_name_index & 0xFF);
+    pio->io_addr[1] = (unsigned char)(io_out_name_index >> 8);
+    SetTcpSysStatus(TCP_CMD_WAIT_ACK,tr("start reading io names..."));
+    this->tcp_socket.write(data.data(),data.size());
+}
+
+void  QRelayDeviceControl::TcpReadIoNames(void)
+{
+    QByteArray data;
+    data.resize(sizeof(CmdHead) + sizeof(CmdIoName));
+    CmdHead  * pcmd = (CmdHead *)data.data_ptr()->data;
+    CmdIoName * pio = (CmdIoName *)GET_CMD_DATA(pcmd);
+    pcmd->cmd = tcp_cmd_number = CMD_GET_IO_NAME;
+    pcmd->cmd_index = ++cmd_index;
+    pcmd->cmd_len = sizeof(CmdIoName);
+    pcmd->cmd_option = 0;
+    pio->io_addr[0] = (unsigned char)(io_out_name_index & 0xFF);
+    pio->io_addr[1] = (unsigned char)(io_out_name_index >> 8);
+    SetTcpSysStatus(TCP_CMD_WAIT_ACK,tr("continue reading io names..."));
+    this->tcp_socket.write(data.data(),data.size());
+}
+
+void  QRelayDeviceControl::TcpAckIoNames(QByteArray & buffer)
+{
+    CmdHead  * pcmd = (CmdHead *)buffer.data_ptr()->data;
+    CmdIoName * pio = (CmdIoName *)GET_CMD_DATA(pcmd);
+    //更新某路的名字
+    QString aryname(QString::fromLocal8Bit((const char *)pio->io_name));
+    debuginfo(("read back io anme:%s",aryname.toAscii().data()));
+    io_out_names.resize(this->GetIoOutNum());
+    int num = pio->io_addr[1];
+    num <<= 8;
+    num |= pio->io_addr[0];
+    if(num < this->GetIoOutNum()) {
+        io_out_names[num] = aryname;
+    }
+    if(++io_out_name_index >= io_out_name_count) {
+        //结束读名字
+        sys_init_bitmask &= ~SYS_IO_NAME;
+        SetTcpSysStatus(TCP_CMD_IDLE,tr("finished reading io names..."));
+    } else {
+        //继续读名字
+        TcpReadIoNames();
+    }
+
+    tcp_ack_timeout_count = 0;
+
 }
 
 void QRelayDeviceControl::TimeoutUpdataInfo(void)
@@ -793,7 +837,7 @@ void QRelayDeviceControl::SetDeviceInfo(QByteArray & data)
         debuginfo(("device is useful..."));
         bdevcie_info_is_useful = true;
         //创建Tcp连接
-        tcp_socket.connectToHost(GetDeviceAddress(),2000);
+        tcp_socket.connectToHost(GetDeviceAddress(),tcp_port);
     }
 
     ack_status = tr("device(") + this->GetDeviceAddress() + tr(") infomation is updated.");
@@ -831,6 +875,13 @@ QString QRelayDeviceControl::GetDeviceTime(void)
     str.sprintf("%d-%d-%d %d-%d-%d",1900+pbuf[5],1+pbuf[4],pbuf[3],pbuf[2],pbuf[1],pbuf[0]);
     //debuginfo(("device time:%s",str.toAscii().data()));
     return str;
+}
+
+void  QRelayDeviceControl::SetTcpSysStatus(int newState,QString string)
+{
+    tcp_sys_state = newState;
+    sys_timeout_count = 0;
+    sys_current_status = string;
 }
 
 uint16_t CRC16(unsigned char *Array,unsigned int Len)

@@ -14,17 +14,23 @@
 #include "rc4.h"
 #include "PasswordItemDef.h"
 
-#define  TCP_CMD_IDLE                0
-#define  TCP_CMD_SENDING         1
-#define  TCP_CMD_ACK_OK           2
-#define  TCP_CMD_TIMEOUT         3
+#define  TCP_CMD_POWER_UP              0
+#define  TCP_CMD_IDLE                         1
+#define  TCP_CMD_CONNECTING         2
+#define  TCP_CMD_WAIT_LINE_OK       3
+#define  TCP_CMD_WAIT_ACK               4
 
+
+//sys_init_bitmask的位定义
+#define SYS_IO_NAME           (1<<0)
+#define SYS_IO_TIME            (1<<1)
 
 class QRelayDeviceControl : public QObject
 {
     Q_OBJECT
 public:
     QRelayDeviceControl(QObject * parent);
+    virtual ~QRelayDeviceControl();
 signals:
     void DeviceInfoChanged(QString hostaddrID);
     void DeviceAckStatus(QString status);
@@ -66,6 +72,10 @@ public:
     void      MultiIoOutSet(unsigned int start_index,QBitArray bit_mask);
     int        MultiIoOutSetAck(QByteArray & data);
     void      ResetDevice(void);
+    //TCP指令实现
+    void      ReadIoOutName(unsigned int index);
+    void      AckReadIoOutName(QByteArray & buffer);
+    //
     QBitArray   relay_bitmask;
     QSharedPointer<device_info_st> & GetDeviceInfo(void) { return pdev_info; }
 private:
@@ -90,13 +100,30 @@ private:
     QString   ack_status;
 private:  //TCP接口数据
     QTcpSocket    tcp_socket;
+    unsigned int    tcp_port;
     QTimer   tcp_updata_timer;
-    bool   tcp_is_connected;
-    int      tcp_cmd_state;
-    int      tcp_cmd_count;
-    unsigned int cmd_index;
-    bool   io_out_name_need_updata;
+    //流程图控制变量
+    int                      tcp_sys_state;
+    unsigned int     sys_timeout_count;
+    QString              sys_current_status;
+    unsigned int      cmd_index;
+    int                       tcp_cmd_number;
+    unsigned int      tcp_ack_timeout_count;
+    //初始化位变量
+    unsigned char  sys_init_bitmask;
+    //读名字流程图控制变量
+    unsigned int      io_out_name_index;
+    unsigned int      io_out_name_count;
     QVector<QString>  io_out_names;
+    //读写定时器流程图控制变量
+    unsigned int      io_out_time_index;
+    unsigned int      io_out_time_count;
+    //状态机函数
+    void  SetTcpSysStatus(int newState,QString string);
+    void  TcpStartReadIoNames(void);
+    void  TcpReadIoNames(void);
+    void  TcpAckIoNames(QByteArray & buffer);
+    //多余的东东
 private slots:
     void	tcpconnected ();
     void	tcpdisconnected ();
