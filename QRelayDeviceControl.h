@@ -13,6 +13,7 @@
 #include "CDeviceDelegate.h"
 #include "rc4.h"
 #include "PasswordItemDef.h"
+#include "command_datatype.h"
 
 #define  TCP_CMD_POWER_UP              0
 #define  TCP_CMD_IDLE                         1
@@ -72,10 +73,6 @@ public:
     void      MultiIoOutSet(unsigned int start_index,QBitArray bit_mask);
     int        MultiIoOutSetAck(QByteArray & data);
     void      ResetDevice(void);
-    //TCP指令实现
-    void      ReadIoOutName(unsigned int index);
-    void      AckReadIoOutName(QByteArray & buffer);
-    //
     QBitArray   relay_bitmask;
     QSharedPointer<device_info_st> & GetDeviceInfo(void) { return pdev_info; }
 private:
@@ -118,11 +115,16 @@ private:  //TCP接口数据
     //读写定时器流程图控制变量
     unsigned int      io_out_time_index;
     unsigned int      io_out_time_count;
+    QVector<timing_node>  io_out_timing_list;
     //状态机函数
     void  SetTcpSysStatus(int newState,QString string);
     void  TcpStartReadIoNames(void);
     void  TcpReadIoNames(void);
     void  TcpAckIoNames(QByteArray & buffer);
+    //定时
+    void  TcpStartReadTimimgs(void);
+    void  TcpReadTimimgs(void);
+    void TcpAckReadTimimgs(QByteArray & buffer);
     //多余的东东
 private slots:
     void	tcpconnected ();

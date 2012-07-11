@@ -105,6 +105,11 @@ void	QRelayDeviceControl::tcpreadyRead ()
             }
         }
         break;
+        case CMD_GET_TIMING_INFO:
+        {
+            TcpAckReadTimimgs(arry);
+        }
+        break;
         default:
             break;
         }
@@ -125,10 +130,11 @@ void QRelayDeviceControl::tcp_timer()
         }
     } else if(tcp_sys_state == TCP_CMD_IDLE) {
         if(sys_init_bitmask & SYS_IO_NAME) {
-            TcpStartReadIoNames();
-        } else if(sys_init_bitmask & SYS_IO_TIME) {
-            sys_init_bitmask &= ~SYS_IO_TIME;
+            sys_init_bitmask &= ~SYS_IO_NAME;
             sys_timeout_count = 0;
+            //TcpStartReadIoNames();
+        } else if(sys_init_bitmask & SYS_IO_TIME) {
+            TcpStartReadTimimgs();
         } else if(++sys_timeout_count >= 8)  {
             sys_init_bitmask |= SYS_IO_NAME|SYS_IO_TIME;
         }
@@ -143,7 +149,10 @@ void QRelayDeviceControl::tcp_timer()
                 //判断什么指令，重新发送一遍
                 if(tcp_cmd_number == CMD_GET_IO_NAME) {
                     TcpReadIoNames();
+                } else if(tcp_cmd_number == CMD_GET_TIMING_INFO) {
+                    TcpReadTimimgs();
                 } else { //别的指令
+                    SetTcpSysStatus(TCP_CMD_WAIT_ACK,tr("continue wait command ack..."));
                 }
             }
         }
@@ -221,6 +230,87 @@ void  QRelayDeviceControl::TcpAckIoNames(QByteArray & buffer)
     tcp_ack_timeout_count = 0;
 
 }
+
+void  QRelayDeviceControl::TcpStartReadTimimgs(void)
+{
+    QByteArray data;
+
+    debuginfo(("start read io timimes..."));
+
+    io_out_time_index = 0;
+    io_out_time_count = 0;
+    tcp_ack_timeout_count = 0;
+
+    data.resize(sizeof(CmdHead));
+    CmdHead  * pcmd = (CmdHead *)data.data_ptr()->data;
+    pcmd->cmd = tcp_cmd_number = CMD_GET_TIMING_INFO;
+    pcmd->cmd_index = ++cmd_index;
+    pcmd->cmd_len = 0;
+    SET_CMD_STATE(pcmd,CMD_REQ_START);
+    SetTcpSysStatus(TCP_CMD_WAIT_ACK,tr("start reading io timings..."));
+    this->tcp_socket.write(data.data(),data.size());
+}
+
+void  QRelayDeviceControl::TcpReadTimimgs(void)
+{
+    QByteArray data;
+
+    debuginfo(("continue read io timimes..."));
+
+    data.resize(sizeof(CmdHead));
+    CmdHead  * pcmd = (CmdHead *)data.data_ptr()->data;
+    pcmd->cmd = tcp_cmd_number = CMD_GET_TIMING_INFO;
+    pcmd->cmd_index = ++cmd_index;
+    pcmd->cmd_len = 0;
+    SET_CMD_STATE(pcmd,CMD_REQ_NEXT);
+    SetTcpSysStatus(TCP_CMD_WAIT_ACK,tr("continue reading io timings..."));
+    this->tcp_socket.write(data.data(),data.size());
+}
+void QRelayDeviceControl::TcpAckReadTimimgs(QByteArray & buffer)
+{
+    CmdHead  * rcmd = (CmdHead *)buffer.data_ptr()->data;
+    if(GET_CMD_STATE(rcmd) == CMD_CURRENT_START) {
+        if(rcmd->cmd_len >= sizeof(timint_info)) {
+            const timint_info * rio = (const timint_info *)GET_CMD_DATA(rcmd);
+            io_out_time_count = rio->time_max_count; //就是所需要的，定时器总数
+            io_out_timing_list.clear();
+            if(io_out_time_count) {
+                //需要继续读
+                debuginfo(("ack read io timimes, MAX = %d,start read.",io_out_time_count));
+                TcpReadTimimgs();
+            } else {
+                //不需要继续读
+                debuginfo(("ack read io timimes,count=0 ,finished."));
+                goto done_read;
+            }
+        } else {
+            //读数据出错
+        }
+    }else if(GET_CMD_STATE(rcmd) == CMD_CURRENT_DOING) {
+        if(rcmd->cmd_len >= sizeof(timing_node)) {
+            //没错
+            const timing_node * rio = (const timing_node *)GET_CMD_DATA(rcmd);
+            io_out_timing_list.push_back(*rio);
+            if(io_out_time_index < io_out_time_count) {
+                debuginfo(("ack read io timimes,continue read %d node",io_out_time_index));
+                io_out_time_index++;
+                TcpReadTimimgs();
+            } else {
+                debuginfo(("ack read io timimes,finished read %d time nodes",io_out_time_count));
+                goto done_read;
+            }
+        } else {
+            //读定时出错
+        }
+    }else if(GET_CMD_STATE(rcmd) == CMD_CURRENT_DONE) {
+        debuginfo(("ack read io timimes,done read."));
+done_read:
+        sys_init_bitmask &= ~SYS_IO_TIME;
+        SetTcpSysStatus(TCP_CMD_IDLE,tr("finished reading io timings."));
+    }
+    tcp_ack_timeout_count = 0;
+}
+
 
 void QRelayDeviceControl::TimeoutUpdataInfo(void)
 {
