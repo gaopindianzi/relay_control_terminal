@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>515</width>
-    <height>256</height>
+    <width>509</width>
+    <height>259</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,6 +41,17 @@
    <property name="title">
     <string>Relay Output</string>
    </property>
+   <widget class="QWidget" name="gridLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>25</y>
+      <width>471</width>
+      <height>166</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout"/>
+   </widget>
   </widget>
  </widget>
  <resources/>
