@@ -166,7 +166,8 @@ void QRelayValueSingalChannalButton::paintEvent ( QPaintEvent * event )
        // painter.drawText(target,Qt::AlignTop|Qt::AlignLeft,numstr);
         //Ð´Ãû×Ö
         //painter.drawText(target,Qt::AlignBottom|Qt::AlignLeft,"  " + pdevice->GetDeviceIoOutName(i));
-        painter.drawText(target,Qt::AlignVCenter|Qt::AlignLeft,"           " + pdevice->GetDeviceIoOutName(i));
+        target.moveLeft(target.left()+40);
+        painter.drawText(target,Qt::AlignVCenter|Qt::AlignLeft,pdevice->GetDeviceIoOutName(i));
     }
 }
 

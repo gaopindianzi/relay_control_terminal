@@ -132,8 +132,9 @@ void QRelayDeviceControl::tcp_timer()
         if(sys_init_bitmask & SYS_IO_NAME) {
             sys_init_bitmask &= ~SYS_IO_NAME;
             sys_timeout_count = 0;
-            //TcpStartReadIoNames();
+            TcpStartReadIoNames();
         } else if(sys_init_bitmask & SYS_IO_TIME) {
+            debuginfo(("init bit io times..."));
             TcpStartReadTimimgs();
         } else if(++sys_timeout_count >= 8)  {
             sys_init_bitmask |= SYS_IO_NAME|SYS_IO_TIME;

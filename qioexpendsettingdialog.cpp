@@ -6,6 +6,7 @@ QIoExpendSettingDialog::QIoExpendSettingDialog(QWidget *parent) :
     ui(new Ui::QIoExpendSettingDialog)
 {
     ui->setupUi(this);
+    //根据布局绘制IO输出控件
 }
 
 QIoExpendSettingDialog::~QIoExpendSettingDialog()
