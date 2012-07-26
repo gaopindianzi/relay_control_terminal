@@ -107,7 +107,7 @@ QIoExpendSettingDialog::QIoExpendSettingDialog(RelayDeviceSharePonterType pdev,Q
        layout_left->addStretch();
        layout_right->addStretch();
        //调整对话框大小
-       this->setFixedSize(430,(ioout_num/2)*(32+6) + 50);
+       this->setFixedSize(420,(ioout_num/2)*(32+6) + 50);
        ui->groupBoxIoButtons->setFixedSize(this->width()-20,this->height()-20);
    }
 

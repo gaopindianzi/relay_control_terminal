@@ -426,30 +426,40 @@
         <translation type="unfinished">对话框</translation>
     </message>
     <message>
-        <location filename="qioexpendsettingdialog.ui" line="42"/>
+        <location filename="qioexpendsettingdialog.ui" line="26"/>
         <source>Relay Output</source>
         <translation type="unfinished">继电器输出</translation>
+    </message>
+    <message>
+        <location filename="qioexpendsettingdialog.cpp" line="117"/>
+        <source>Relay Output : </source>
+        <translation type="unfinished">继电器输出： </translation>
+    </message>
+    <message>
+        <location filename="qioexpendsettingdialog.cpp" line="117"/>
+        <source> channel</source>
+        <translation type="unfinished"> 路</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="main.cpp" line="28"/>
+        <location filename="main.cpp" line="34"/>
         <source>Warning</source>
         <translation type="unfinished">注意</translation>
     </message>
     <message>
-        <location filename="main.cpp" line="29"/>
+        <location filename="main.cpp" line="35"/>
         <source>The program has already been running!</source>
         <translation type="unfinished">该程序已经在运行中...</translation>
     </message>
     <message>
-        <location filename="main.cpp" line="39"/>
+        <location filename="main.cpp" line="45"/>
         <source>Systray</source>
         <translation type="unfinished">systray</translation>
     </message>
     <message>
-        <location filename="main.cpp" line="40"/>
+        <location filename="main.cpp" line="46"/>
         <source>I couldn&apos;t detect any system tray on this system.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -551,84 +561,154 @@ do you replace the exist password item?</source>
 <context>
     <name>QRelayDeviceControl</name>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="45"/>
+        <location filename="QRelayDeviceControl.cpp" line="56"/>
+        <source>none</source>
+        <translation type="unfinished">  </translation>
+    </message>
+    <message>
+        <location filename="QRelayDeviceControl.cpp" line="65"/>
         <source>none.</source>
         <translation type="unfinished">none</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="56"/>
+        <location filename="QRelayDeviceControl.cpp" line="77"/>
+        <source>idle</source>
+        <translation type="unfinished">空闲</translation>
+    </message>
+    <message>
+        <location filename="QRelayDeviceControl.cpp" line="82"/>
+        <source>wait line ok...</source>
+        <translation type="unfinished">等待连接正常...</translation>
+    </message>
+    <message>
+        <location filename="QRelayDeviceControl.cpp" line="126"/>
+        <source>tcp connecting to the device...</source>
+        <translation type="unfinished">TCP正在连接到设备...</translation>
+    </message>
+    <message>
+        <location filename="QRelayDeviceControl.cpp" line="131"/>
+        <source>tcp waiting line ok...</source>
+        <translation type="unfinished">TCP等待线路正常...</translation>
+    </message>
+    <message>
+        <location filename="QRelayDeviceControl.cpp" line="152"/>
+        <source>sending command timeout,try to wait again...</source>
+        <translation type="unfinished">发送命令超时，重试...</translation>
+    </message>
+    <message>
+        <location filename="QRelayDeviceControl.cpp" line="155"/>
+        <source>sending command timeout,close the tcp connect and wait sometime...</source>
+        <translation type="unfinished">发送命令超时，关闭TCP连接，等待尝试...</translation>
+    </message>
+    <message>
+        <location filename="QRelayDeviceControl.cpp" line="163"/>
+        <source>continue wait command ack...</source>
+        <translation type="unfinished">继续等待命令应答...</translation>
+    </message>
+    <message>
+        <location filename="QRelayDeviceControl.cpp" line="195"/>
+        <source>start reading io names...</source>
+        <translation type="unfinished">开始读IO名字...</translation>
+    </message>
+    <message>
+        <location filename="QRelayDeviceControl.cpp" line="211"/>
+        <source>continue reading io names...</source>
+        <translation type="unfinished">继续读IO名字...</translation>
+    </message>
+    <message>
+        <location filename="QRelayDeviceControl.cpp" line="232"/>
+        <source>finished reading io names...</source>
+        <translation type="unfinished">完成读IO名字...</translation>
+    </message>
+    <message>
+        <location filename="QRelayDeviceControl.cpp" line="258"/>
+        <source>start reading io timings...</source>
+        <translation type="unfinished">开始读定时...</translation>
+    </message>
+    <message>
+        <location filename="QRelayDeviceControl.cpp" line="274"/>
+        <source>continue reading io timings...</source>
+        <translation type="unfinished">继续读定时...</translation>
+    </message>
+    <message>
+        <location filename="QRelayDeviceControl.cpp" line="317"/>
+        <source>finished reading io timings.</source>
+        <translation type="unfinished">完成读定时...</translation>
+    </message>
+    <message>
+        <location filename="QRelayDeviceControl.cpp" line="330"/>
         <source>On Line</source>
         <translation type="unfinished">在线</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="61"/>
+        <location filename="QRelayDeviceControl.cpp" line="335"/>
         <source>Off Line</source>
         <translation type="unfinished">离线</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="135"/>
+        <location filename="QRelayDeviceControl.cpp" line="429"/>
         <source>sending set device name command...</source>
         <translation type="unfinished">发送修改设备名命令中...</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="158"/>
-        <location filename="QRelayDeviceControl.cpp" line="181"/>
+        <location filename="QRelayDeviceControl.cpp" line="452"/>
+        <location filename="QRelayDeviceControl.cpp" line="475"/>
         <source>sending set device group command...</source>
         <translation type="unfinished">发送修改设备组名命令中...</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="198"/>
+        <location filename="QRelayDeviceControl.cpp" line="492"/>
         <source>start writing new device infamation command...</source>
         <translation type="unfinished">往设备写新的设备信息...</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="217"/>
+        <location filename="QRelayDeviceControl.cpp" line="511"/>
         <source>Reset device...</source>
         <translation type="unfinished">复位设备中...</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="266"/>
-        <location filename="QRelayDeviceControl.cpp" line="402"/>
+        <location filename="QRelayDeviceControl.cpp" line="560"/>
+        <location filename="QRelayDeviceControl.cpp" line="696"/>
         <source>set io out bits...</source>
         <translation type="unfinished">设置IO输出位...</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="447"/>
+        <location filename="QRelayDeviceControl.cpp" line="741"/>
         <source>2 ch dig input,2 ch relay output.</source>
         <translation type="unfinished">2路继电器输出控制卡.</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="448"/>
+        <location filename="QRelayDeviceControl.cpp" line="742"/>
         <source>4 ch dig input,4 ch relay output.</source>
         <translation type="unfinished">4路继电器输出控制卡.</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="449"/>
+        <location filename="QRelayDeviceControl.cpp" line="743"/>
         <source>8 ch dig input,8 ch relay output.</source>
         <translation type="unfinished">8继电器输出控制卡.</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="450"/>
+        <location filename="QRelayDeviceControl.cpp" line="744"/>
         <source>16 ch relay output.</source>
         <translation type="unfinished">16路继电器输出控制卡.</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="451"/>
+        <location filename="QRelayDeviceControl.cpp" line="745"/>
         <source>16 ch remote host reseter.</source>
         <translation type="unfinished">16路继电器输出控制卡，服务器专用</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="597"/>
+        <location filename="QRelayDeviceControl.cpp" line="891"/>
         <source>Reseting...</source>
         <translation type="unfinished">正在复位...</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="661"/>
+        <location filename="QRelayDeviceControl.cpp" line="961"/>
         <source>device(</source>
         <translation type="unfinished">设备(</translation>
     </message>
     <message>
-        <location filename="QRelayDeviceControl.cpp" line="661"/>
+        <location filename="QRelayDeviceControl.cpp" line="961"/>
         <source>) infomation is updated.</source>
         <translation type="unfinished">)信息已更新.</translation>
     </message>
