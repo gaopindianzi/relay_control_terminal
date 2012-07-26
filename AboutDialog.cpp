@@ -14,7 +14,6 @@ AboutDialog::~AboutDialog()
     delete ui;
 }
 
-
 void AboutDialog::paintEvent ( QPaintEvent * event )
 {
     QPainter painter(this);

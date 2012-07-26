@@ -36,7 +36,7 @@ QDeviceControlWidget::QDeviceControlWidget(QWidget * parent)
 
 void QDeviceControlWidget::contextMenuEvent(QContextMenuEvent *event)
 {
-#if 0  //尚未实现
+#if 1 //尚未实现
     debuginfo(("at context event."));
     const QPoint & pos = event->pos();
     QTableWidgetItem * item = this->itemAt(pos);
@@ -63,7 +63,7 @@ void  QDeviceControlWidget::IoSettingDialog(void)
     QAction * act = (QAction *)sender();
     QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(act->data());
     //debuginfo((" this io devcie is = %s",pdev->GetDeviceName().toAscii().data()));
-    QIoExpendSettingDialog dlg;
+    QIoExpendSettingDialog dlg(pdev);
     dlg.setWindowTitle(pdev->GetDeviceName());
     dlg.exec();
 }
@@ -293,7 +293,7 @@ void MainWindow::CreateMenu(void)
 
 
 
-#if     0 //for debug
+#if     1 //for debug
     password_item itm;
     itm.alias = "admin";
     itm.pwd = "admin";
