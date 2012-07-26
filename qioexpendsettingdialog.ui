@@ -6,36 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>509</width>
-    <height>259</height>
+    <width>437</width>
+    <height>510</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox">
-   <property name="geometry">
-    <rect>
-     <x>340</x>
-     <y>220</y>
-     <width>161</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
   <widget class="QGroupBox" name="groupBoxIoButtons">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>491</width>
-     <height>206</height>
+     <width>406</width>
+     <height>486</height>
     </rect>
    </property>
    <property name="title">
@@ -45,9 +29,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>25</y>
-      <width>471</width>
-      <height>166</height>
+      <y>20</y>
+      <width>386</width>
+      <height>486</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout"/>
@@ -55,38 +39,5 @@
   </widget>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>QIoExpendSettingDialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>QIoExpendSettingDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

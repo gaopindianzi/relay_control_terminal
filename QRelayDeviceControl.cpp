@@ -120,6 +120,8 @@ void QRelayDeviceControl::tcp_timer()
 {
     if(tcp_sys_state == TCP_CMD_WAIT_LINE_OK) {
         if(++sys_timeout_count >= 5) {
+            sys_init_bitmask |= SYS_IO_NAME;
+            sys_init_bitmask |= SYS_IO_TIME;
             tcp_socket.connectToHost(GetDeviceAddress(),tcp_port);
             SetTcpSysStatus(TCP_CMD_CONNECTING,tr("tcp connecting to the device..."));
         }
@@ -135,9 +137,14 @@ void QRelayDeviceControl::tcp_timer()
             TcpStartReadIoNames();
         } else if(sys_init_bitmask & SYS_IO_TIME) {
             debuginfo(("init bit io times..."));
+            sys_init_bitmask &= ~SYS_IO_TIME;
             TcpStartReadTimimgs();
-        } else if(++sys_timeout_count >= 8)  {
-            sys_init_bitmask |= SYS_IO_NAME|SYS_IO_TIME;
+        } else if(++sys_timeout_count >= 30)  {  //超过10秒钟，下位机是会自动断开的。
+            //sys_init_bitmask |= SYS_IO_NAME|SYS_IO_TIME;  //定时更新？？
+            //必定保持更新!因为需要用户实时响应！除非没有这个功能
+            //但是别的用户就不能连接了。
+            //实际使用情况来看。隔一段时间做一下断开个和连接，
+            //就是用户没有实际修改的情况下，做断开连接，以供其他用户连接
         }
     } else if(tcp_sys_state == TCP_CMD_WAIT_ACK) {
         if(++sys_timeout_count >= 8) {
@@ -380,6 +387,26 @@ QString QRelayDeviceControl::GetRemoteHostPort(void)
     port += this->pdev_info->remote_host_port[0];
     str.sprintf("%d", port);
     return str;
+}
+
+int         QRelayDeviceControl::GetTimingNodeNum(void)
+{
+    return io_out_time_count;
+}
+
+int         QRelayDeviceControl::GetTimingNodeNum(int index)
+{
+    int count = 0;
+    for(int i=0;i<io_out_timing_list.size();i++) {
+        timing_node * pnode = &io_out_timing_list[i];
+        int addr = pnode->addr[1];
+        addr *= 256;
+        addr += pnode->addr[0];
+        if(index == addr) {
+            count++;
+        }
+    }
+    return count;
 }
 
 void QRelayDeviceControl::SetDeviceName(QString name)

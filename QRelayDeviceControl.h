@@ -55,6 +55,8 @@ public:
     QString GetRemoteHostAddress(void);
     QString GetRemoteHostPort(void);
     QString GetDeviceTime(void);
+    int         GetTimingNodeNum(void);
+    int         GetTimingNodeNum(int index);
     void      WriteNewDeviceInfoToDevice(device_info_st * pst);
     void      SetDeviceName(QString newDeviceName);
     QString GetGroup1Name(void);

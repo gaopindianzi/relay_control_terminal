@@ -63,7 +63,7 @@ void  QDeviceControlWidget::IoSettingDialog(void)
     QAction * act = (QAction *)sender();
     QSharedPointer<QRelayDeviceControl> pdev = qVariantValue<RelayDeviceSharePonterType>(act->data());
     //debuginfo((" this io devcie is = %s",pdev->GetDeviceName().toAscii().data()));
-    QIoExpendSettingDialog dlg;
+    QIoExpendSettingDialog dlg(pdev);
     dlg.setWindowTitle(pdev->GetDeviceName());
     dlg.exec();
 }

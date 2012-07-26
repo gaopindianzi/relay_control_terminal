@@ -6,7 +6,6 @@
 #include <QSharedPointer>
 #include "multimgr_device_dev.h"
 #include "QRelayDeviceControl.h"
-#include "CDeviceDelegate.h"
 
 class QSetOnPushButton : public QPushButton
 {
