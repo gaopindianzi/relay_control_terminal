@@ -473,6 +473,7 @@ void MainWindow::CreateDevcieTable(void)
         deviceTable->horizontalHeader()->resizeSection(index++,120);
 #endif
         deviceTable->verticalHeader()->hide();
+        deviceTable->hideColumn(index-1);
         //ее╟Ф
         QVBoxLayout *layout = new QVBoxLayout;
         layout->addWidget(deviceTable);
